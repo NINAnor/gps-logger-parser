@@ -1,0 +1,38 @@
+
+[project]
+authors = [
+  {name = "ninanor", email = "ninanor@nina.no"}
+]
+# PEP 621 project metadata
+# See https://www.python.org/dev/peps/pep-0621/
+dependencies = [
+  "django-environ",
+  "typer>=0.23.1",
+]
+description = ""
+license = "MIT"
+name = "gps_logger_parser"
+readme = "README.md"
+requires-python = ">=3.10"
+version = "0.1.0"
+
+
+[project.scripts]
+gps_logger_parser = "main:start"
+
+[dependency-groups]
+dev = [
+  "deptry",
+]
+
+[tool.ruff]
+fix = true
+
+[tool.ruff.lint]
+ignore = ["COM812"]
+select = ["E", "W", "I", "F", "UP", "S", "B", "A", "COM", "LOG", "PTH", "Q"]
+
+
+[build-system]
+requires = ["uv_build>=0.10.2,<0.11.0"]
+build-backend = "uv_build"
