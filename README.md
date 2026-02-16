@@ -1,82 +1,71 @@
 # GPS Logger Parser
 
-## Setup
-Install `uv`: https://docs.astral.sh/uv/getting-started/installation/
+A small Python library and CLI for parsing GPS logger files from multiple device formats
+and exporting their data to a standardized Parquet (or CSV) format.
+
+**Features**
+- Detects and parses many GPS logger formats (see `src/gps_logger_parser/gps`)
+- CLI and Python API for parsing single files or batching
+- Outputs `parquet` (default) or CSV via the parser API
+
+**Installation**
+This project uses `uv`/`uvx` for environment and package management. Recommended development setup:
 
 ```bash
-git init
 uv sync --dev
-git add .
-git commit -m "Initial commit"
-uv run pre-commit install # optional
 ```
 
+Run the CLI directly from the source (no install required):
 
-### Run
-To execute your software you have two options:
-
-**Option 1: Direct execution**
 ```bash
-uv run main.py
+uvx --from git+https://github.com/NINAnor/gps-logger-parser gps-logger-parser parse path/to/logger_file.txt -o ./out
 ```
 
-**Option 2: Run as installed package**
+
+**Command-line usage**
+After installation the package exposes the `gps-logger-parser` command (entry point).
+
+Parse a file and write a Parquet file into `./out`:
+
 ```bash
-uvx --from . gps_logger_parser
+gps-logger-parser parse path/to/logger_file.txt -o ./out
 ```
 
-### Development
-Just run `uv run main.py` and you are good to go!
+(Alternative) run the CLI module directly without installing:
 
-### Update from template
-To update your project with the latest changes from the template, run:
 ```bash
-uvx --with copier-template-extensions copier update --trust
+uv run gps-logger-parser parse path/to/logger_file.txt -o ./out
 ```
 
-You can keep your previous answers by using:
+By default the parser writes a file named like the original input with a `.parquet` suffix.
+
+**Python API**
+Use the `detect_file` helper to obtain a parser instance and write output programmatically:
+
+```python
+from pathlib import Path
+from gps_logger_parser.parser import detect_file
+
+p = detect_file(Path("test_data/success/gps_gpx/example.gpx"))
+p.write_parquet(Path("out"))
+```
+
+Parser instances expose `write_parquet(path, filename=None)` and helper methods to access
+the parsed data as a PyArrow table via `as_table()`.
+
+**Project layout & tests**
+- Parsers are implemented under `src/gps_logger_parser/gps`, `accelerometer`, `tdr`, and `other_sensor`.
+- Example test data is available in the `test_data` directory.
+-- Run tests with `pytest` (via `uvx` after provisioning dev env):
+
 ```bash
-uvx --with copier-template-extensions copier update --trust --defaults
+uv sync --dev
+uv run pytest
 ```
 
-### (Optional) pre-commit
-pre-commit is a set of tools that help you ensure code quality. It runs every time you make a commit.
+**Contributing**
+Contributions and additional parsers are welcome. Please open an issue or a pull request with sample
+files and expected outputs so a parser can be added or improved.
 
-First, install pre-commit:
-```bash
-uv tool install pre-commit
-```
-
-Then install pre-commit hooks:
-```bash
-pre-commit install
-```
-
-To run pre-commit on all files:
-```bash
-pre-commit run --all-files
-```
-
-### How to install a package
-Run `uv add <package-name>` to install a package. For example:
-```bash
-uv add requests
-```
-
-#### Visual studio code
-If you are using visual studio code install the recommended extensions
-
-
-### Tools installed
-- uv
-- pre-commit (optional)
-
-#### What is an environment variable? and why should I use them?
-Environment variables are variables that are not populated in your code but rather in the environment
-that you are running your code. This is extremely useful mainly for two reasons:
-- security, you can share your code without sharing your passwords/credentials
-- portability, you can avoid using hard-coded values like file-system paths or folder names
-
-you can place your environment variables in a file called `.env`, the `main.py` will read from it. Remember to:
-- NEVER commit your `.env`
-- Keep a `.env.example` file updated with the variables that the software expects
+**License**
+This project is licensed under the MIT License.
