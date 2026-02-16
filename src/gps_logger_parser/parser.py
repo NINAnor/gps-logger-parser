@@ -1,6 +1,7 @@
 import logging
-import pathlib
 import traceback
+
+from upath import UPath
 
 from .accelerometer import PARSERS as ACCELEROMETER_PARSERS
 from .gps import PARSERS as GPS_PARSERS
@@ -13,7 +14,7 @@ available_parsers = (
 )
 
 
-def detect_file(path: pathlib.Path):
+def detect_file(path: UPath):
     parsable = Parsable(file_path=path)
 
     for parser in available_parsers:
@@ -23,7 +24,7 @@ def detect_file(path: pathlib.Path):
             return result
         except ParserNotSupported:
             logging.debug("Expected: " + traceback.format_exc())
-        except:
+        except Exception:
             logging.error(traceback.format_exc())
 
     raise NotImplementedError("File not supported")

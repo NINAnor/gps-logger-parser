@@ -1,6 +1,5 @@
-import pathlib
-
 import typer
+from upath import UPath
 
 from .parser import detect_file
 
@@ -12,19 +11,27 @@ _output_option = typer.Option(
     ".", "--output", "-o", help="Directory to save the parsed output (as parquet)"
 )
 _verbose_option = typer.Option(False, "--verbose", "-v", help="Enable verbose logging")
-_file_argument = typer.Argument(
-    ..., help="Path to the GPS logger file to parse"
-)
+_file_argument = typer.Argument(..., help="Path to the GPS logger file to parse")
 
 
 @app.command()
 def parse(
-    file: pathlib.Path = _file_argument,
-    output: pathlib.Path = _output_option,
+    file: str = _file_argument,
+    output: str = _output_option,
     verbose: bool = _verbose_option,
+    s3_endpoint: str = typer.Option(
+        None, "--s3-endpoint", help="Custom S3 endpoint URL"
+    ),
 ):
-    parser_instance = detect_file(file)
-    parser_instance.write_parquet(output)
+    params = {}
+
+    if file.startswith("s3://"):
+        if s3_endpoint:
+            params["endpoint_url"] = s3_endpoint
+        params["anon"] = True
+
+    parser_instance = detect_file(UPath(file, **params))
+    parser_instance.write_parquet(UPath(output))
 
 
 if __name__ == "__main__":

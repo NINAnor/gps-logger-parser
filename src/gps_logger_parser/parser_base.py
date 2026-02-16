@@ -8,6 +8,7 @@ import pyarrow as pa
 import pyarrow.csv as pacsv
 import pyarrow.parquet as pq
 from chardet.universaldetector import UniversalDetector
+from upath import UPath
 
 MAX_SPEED = float(os.environ.get("MAX_SPEED", default="10"))
 
@@ -17,7 +18,7 @@ class ParserNotSupported(Exception):
 
 
 class Parsable:
-    def __init__(self, file_path: pathlib.Path) -> None:
+    def __init__(self, file_path: UPath) -> None:
         self._file_path = file_path
 
         if not self._file_path.exists():
@@ -32,7 +33,7 @@ class Parsable:
             "encoding": None if binary else self.encoding,
             "errors": errors if not binary else None,
         }
-        stream = open(self._file_path, **params)
+        stream = self._file_path.open(**params)
         yield stream
         stream.close()
 
