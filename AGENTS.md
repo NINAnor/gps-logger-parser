@@ -1,0 +1,5 @@
+- ALWAYS attempt to add a test case for changed behavior
+- PREFER running specific tests over running the entire test suite
+- ALWAYS read and copy the style of similar tests when adding new cases
+- AVOID shortening variable names, e.g., use version instead of ver, and requires_python instead of rp
+- ALWAYS use `uv` to run commands
