@@ -13,6 +13,8 @@ available_parsers = (
     GPS_PARSERS + ACCELEROMETER_PARSERS + TDR_PARSERS + OTHER_SENSOR_PARSERS
 )
 
+logger = logging.getLogger(__name__)
+
 
 def detect_file(path: UPath):
     parsable = Parsable(file_path=path)
@@ -20,11 +22,11 @@ def detect_file(path: UPath):
     for parser in available_parsers:
         try:
             result = parser(parsable)
-            logging.info(f"Parsed with {parser}")
+            logger.info(f"Parsed with {parser}")
             return result
         except ParserNotSupported:
-            logging.debug("Expected: " + traceback.format_exc())
+            logger.debug("Expected: " + traceback.format_exc())
         except Exception:
-            logging.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
     raise NotImplementedError("File not supported")
