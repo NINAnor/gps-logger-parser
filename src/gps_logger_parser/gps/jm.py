@@ -70,6 +70,29 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
+    def harmonize_data(self, data):
+        # Combine start date with time from each row
+        # start_date is in format DD.MM.YYYY, time is HH:MM:SS
+        # Call parent harmonization first
+        data = super().harmonize_data(data)
+
+        # Then create the timestamp column after original columns are prefixed
+        if hasattr(self, "start_date") and self.start_date:
+            # time column is now __original__time
+            data["timestamp"] = pd.to_datetime(
+                self.start_date + " " + data["__original__time"],
+                format="%d.%m.%Y %H:%M:%S",
+                errors="coerce",
+            )
+        else:
+            # Fallback if start_date not available
+            data["timestamp"] = pd.to_datetime(
+                data["__original__date"].astype(str) + " " + data["__original__time"],
+                format="%d %H:%M:%S",
+                errors="coerce",
+            )
+        return data
+
     def _fix_content(self, data):
         return data
 
@@ -84,11 +107,27 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
             if not stream_chunk_contains(stream, 30, "2JmGPS-LOG"):
                 self._raise_not_supported("Stream must start with 2JmGPS-LOG")
 
-            groups = stream.read().split("\n\n")
+            full_content = stream.read()
+            groups = full_content.split("\n\n")
             head = groups.pop(0)
 
             if self.VERSION not in head:
                 self._raise_not_supported("Version not supported")
+
+            # Extract STARTTIME date from any of the header groups
+            self.start_date = None
+            for group in groups:
+                for line in group.split("\n"):
+                    if "STARTTIME" in line:
+                        # Format: STARTTIME .......: 29.06.2013 20:00:00
+                        parts = line.split(":")
+                        if len(parts) >= 2:
+                            datetime_str = parts[1].strip()
+                            # Extract just the date part (DD.MM.YYYY)
+                            self.start_date = datetime_str.split()[0]
+                        break
+                if self.start_date:
+                    break
 
             data = None
             for group in groups:
@@ -160,15 +199,22 @@ class GPS2JMParser8(GPS2JMParser7_5):
     }
 
     def harmonize_data(self, data):
-        # Combine date and time columns into timestamp
-        # date is just day number (e.g., 29), time is HH:MM:SS
-        # This will result in a datetime with year 1900 by default
-        data["timestamp"] = pd.to_datetime(
-            data["date"].astype(str) + " " + data["time"],
-            format="%d %H:%M:%S",
-            errors="coerce",
-        )
-        return super().harmonize_data(data)
+        # Combine start date with time from each row
+        # start_date is in format DD.MM.YYYY, time is HH:MM:SS
+        # Call parent harmonization first
+        data = super().harmonize_data(data)
+
+        # Then create the timestamp column after original columns are prefixed
+        if hasattr(self, "start_date") and self.start_date:
+            # time column is now __original__time
+            data["timestamp"] = pd.to_datetime(
+                self.start_date + " " + data["__original__time"],
+                format="%d.%m.%Y %H:%M:%S",
+                errors="coerce",
+            )
+        else:
+            raise NotImplementedError("Version 8 without start date is not supported")
+        return data
 
     def _fix_content(self, data: str):
         """
@@ -228,10 +274,16 @@ class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
 
     def harmonize_data(self, data):
         # Combine UTC_date and UTC_time columns into timestamp
+        # Call parent harmonization first
+        data = super().harmonize_data(data)
+
+        # Then create timestamp from the prefixed original columns
         data["timestamp"] = pd.to_datetime(
-            data["UTC_date"] + " " + data["UTC_time"], errors="coerce"
+            data["__original__UTC_date"] + " " + data["__original__UTC_time"],
+            format="%d.%m.%Y %H:%M:%S",
+            errors="coerce",
         )
-        return super().harmonize_data(data)
+        return data
 
     def _fix_content(self, data: str):
         """
