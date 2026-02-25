@@ -1,3 +1,4 @@
+from .columns import GPSHarmonizedColumn
 from ..parser_base import CSVParser
 
 
@@ -31,24 +32,24 @@ class GPSParser(CSVParser):
     ]
 
     MAPPINGS = {
-        "id": "device_id",
-        "date": "UTC_date",
-        "time": "UTC_time",
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "Altitude_m",
-        "speed_km_h": "speed_km_h",
-        "type": "datatype",
-        "distance": None,
-        "course": "direction_deg",
-        "hdop": "hdop",
-        "pdop": None,
-        "satellites_count": "satcount",
-        "temperature": "temperature_C",
-        "solar_I_mA": "solar_I_mA",
-        "bat_soc_pct": "bat_soc_pct",
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "device_id",
+        GPSHarmonizedColumn.DATE: "UTC_date",
+        GPSHarmonizedColumn.TIME: "UTC_time",
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "Altitude_m",
+        GPSHarmonizedColumn.SPEED_KM_H: "speed_km_h",
+        GPSHarmonizedColumn.TYPE: "datatype",
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: "direction_deg",
+        GPSHarmonizedColumn.HDOP: "hdop",
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: "satcount",
+        GPSHarmonizedColumn.TEMPERATURE: "temperature_C",
+        GPSHarmonizedColumn.SOLAR_I_MA: "solar_I_mA",
+        GPSHarmonizedColumn.BAT_SOC_PCT: "bat_soc_pct",
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
 

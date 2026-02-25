@@ -2,6 +2,7 @@ import csv
 
 import pyarrow.csv as pacsv
 
+from .columns import GPSHarmonizedColumn
 from ..parser_base import CSVParser, Parsable
 
 
@@ -36,24 +37,24 @@ class AXYTREKParser(CSVParser):
     ]
 
     MAPPINGS = {
-        "id": "TagID",
-        "date": "Date",
-        "time": "Time",
-        "latitude": "location-lat",
-        "longitude": "location-lon",
-        "altitude": "height-above-msl",
-        "speed_km_h": "ground-speed",
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": "hdop",
-        "pdop": None,
-        "satellites_count": "satellite-count",
-        "temperature": "Temp. (?C)",
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "TagID",
+        GPSHarmonizedColumn.DATE: "Date",
+        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.LATITUDE: "location-lat",
+        GPSHarmonizedColumn.LONGITUDE: "location-lon",
+        GPSHarmonizedColumn.ALTITUDE: "height-above-msl",
+        GPSHarmonizedColumn.SPEED_KM_H: "ground-speed",
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: "hdop",
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: "satellite-count",
+        GPSHarmonizedColumn.TEMPERATURE: "Temp. (?C)",
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
     def __init__(self, parsable: Parsable):

@@ -66,7 +66,7 @@ class Parser:
     def get_outliers(self):
         return getattr(self, "OUTLIERS", {})
 
-    def normalize_data(self):
+    def harmonize_data(self):
         """
         Remap values parsed
         """
@@ -91,7 +91,7 @@ class Parser:
             self.data["outlier"] = self.data.apply(check_conditions, axis=1)
 
     def as_table(self) -> pa.Table:
-        self.normalize_data()
+        self.harmonize_data()
         # self.detect_outliers()
         table = pa.Table.from_pandas(self.data, preserve_index=False)
         table = table.append_column(
@@ -106,7 +106,7 @@ class Parser:
         )
         return table
 
-    def write_parquet(self, path: pathlib.Path, filename: str = None):
+    def write_parquet(self, path: pathlib.Path, filename: str | None = None):
         if filename:
             filename = pathlib.Path(filename)
         else:

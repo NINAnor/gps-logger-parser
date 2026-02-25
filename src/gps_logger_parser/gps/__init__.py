@@ -1,6 +1,7 @@
 from .axytrek import PARSERS as AXYTREK
 from .base import PARSERS as BASE
 from .catlog import PARSERS as CATLOG
+from .columns import GPSHarmonizedColumn, GPS_HARMONIZED_COLUMN_TYPES
 from .ecotone import PARSERS as ECOTONE
 from .gpx import GPXParser
 from .ho11 import PARSERS as HO11

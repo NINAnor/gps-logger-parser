@@ -2,6 +2,7 @@ import csv
 
 import pandas as pd
 
+from .columns import GPSHarmonizedColumn
 from ..parser_base import CSVParser, Parsable, Parser
 
 FIELDS = [
@@ -20,24 +21,24 @@ FIELDS = [
 ]
 
 MAPPINGS = {
-    "id": "DataID",
-    "date": "Date",
-    "time": "Time",
-    "latitude": "Latitude",
-    "longitude": "Longitude",
-    "altitude": "Altitude",
-    "speed_km_h": "Speed",
-    "type": None,
-    "distance": None,
-    "course": "Course",
-    "hdop": "HDOP",
-    "pdop": None,
-    "satellites_count": None,
-    "temperature": None,
-    "solar_I_mA": None,
-    "bat_soc_pct": None,
-    "ring_nr": "Ring_nr",
-    "trip_nr": "TripNr",
+    GPSHarmonizedColumn.ID: "DataID",
+    GPSHarmonizedColumn.DATE: "Date",
+    GPSHarmonizedColumn.TIME: "Time",
+    GPSHarmonizedColumn.LATITUDE: "Latitude",
+    GPSHarmonizedColumn.LONGITUDE: "Longitude",
+    GPSHarmonizedColumn.ALTITUDE: "Altitude",
+    GPSHarmonizedColumn.SPEED_KM_H: "Speed",
+    GPSHarmonizedColumn.TYPE: None,
+    GPSHarmonizedColumn.DISTANCE: None,
+    GPSHarmonizedColumn.COURSE: "Course",
+    GPSHarmonizedColumn.HDOP: "HDOP",
+    GPSHarmonizedColumn.PDOP: None,
+    GPSHarmonizedColumn.SATELLITES_COUNT: None,
+    GPSHarmonizedColumn.TEMPERATURE: None,
+    GPSHarmonizedColumn.SOLAR_I_MA: None,
+    GPSHarmonizedColumn.BAT_SOC_PCT: None,
+    GPSHarmonizedColumn.RING_NR: "Ring_nr",
+    GPSHarmonizedColumn.TRIP_NR: "TripNr",
 }
 
 

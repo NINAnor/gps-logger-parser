@@ -101,7 +101,7 @@ class PathtrackPressParser(Parser):
     OUTLIERS = None
     SEPARATOR = ","
 
-    def normalize_data(self):
+    def harmonize_data(self):
         self.data["time"] = (
             self.data["hour"].astype(str)
             + ":"
@@ -116,7 +116,7 @@ class PathtrackPressParser(Parser):
             + ":"
             + self.data["year"].astype(str)
         )
-        return super().normalize_data()
+        return super().harmonize_data()
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)

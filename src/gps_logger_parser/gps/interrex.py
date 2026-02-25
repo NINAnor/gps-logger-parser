@@ -1,4 +1,5 @@
 from ..parser_base import CSVParser
+from .columns import GPSHarmonizedColumn
 
 
 class InterrexParser(CSVParser):
@@ -28,24 +29,24 @@ class InterrexParser(CSVParser):
     ]
 
     MAPPINGS = {
-        "id": "UUID",
-        "date": "Collecting time",
-        "time": None,
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "Altitude",
-        "speed_km_h": "Speed",
-        "type": "Positioning mode",
-        "distance": None,
-        "course": "Course",
-        "hdop": "HDOP",
-        "pdop": "PDOP",
-        "satellites_count": "Satellite used",
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "UUID",
+        GPSHarmonizedColumn.DATE: "Collecting time",
+        GPSHarmonizedColumn.TIME: None,
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "Altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: "Speed",
+        GPSHarmonizedColumn.TYPE: "Positioning mode",
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: "Course",
+        GPSHarmonizedColumn.HDOP: "HDOP",
+        GPSHarmonizedColumn.PDOP: "PDOP",
+        GPSHarmonizedColumn.SATELLITES_COUNT: "Satellite used",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
 

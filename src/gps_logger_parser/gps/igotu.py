@@ -1,4 +1,5 @@
 from ..parser_base import CSVParser
+from .columns import GPSHarmonizedColumn
 
 
 class IGotU_GT_Parser(CSVParser):
@@ -21,24 +22,24 @@ class IGotU_GT_Parser(CSVParser):
     ]
 
     MAPPINGS = {
-        "id": None,
-        "date": "Date",
-        "time": "Time",
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "Altitude",
-        "speed_km_h": "Speed",
-        "type": "Type",
-        "distance": "Distance",
-        "course": "Course",
-        "hdop": None,
-        "pdop": None,
-        "satellites_count": None,
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: None,
+        GPSHarmonizedColumn.DATE: "Date",
+        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "Altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: "Speed",
+        GPSHarmonizedColumn.TYPE: "Type",
+        GPSHarmonizedColumn.DISTANCE: "Distance",
+        GPSHarmonizedColumn.COURSE: "Course",
+        GPSHarmonizedColumn.HDOP: None,
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: None,
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
 
@@ -63,24 +64,24 @@ class GPS_IGOTUGL(IGotU_GT_Parser):
         "TTF [s]",
     ]
     MAPPINGS = {
-        "id": "",
-        "date": "Date",
-        "time": "Time",
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "Altitude",
-        "speed_km_h": None,
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": "HDOP",
-        "pdop": "PDOP",
-        "satellites_count": "Satellites",
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "",
+        GPSHarmonizedColumn.DATE: "Date",
+        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "Altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: "HDOP",
+        GPSHarmonizedColumn.PDOP: "PDOP",
+        GPSHarmonizedColumn.SATELLITES_COUNT: "Satellites",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
 

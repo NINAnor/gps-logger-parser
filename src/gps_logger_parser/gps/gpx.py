@@ -3,6 +3,7 @@ import pandas as pd
 
 from ..helpers import stream_chunk_contains
 from ..parser_base import Parser
+from .columns import GPSHarmonizedColumn
 
 
 class GPXParser(Parser):
@@ -21,31 +22,31 @@ class GPXParser(Parser):
     ]
 
     MAPPINGS = {
-        "id": None,
-        "date": "date",
-        "time": "time",
-        "latitude": "latitude",
-        "longitude": "longitude",
-        "altitude": "elevation",
-        "speed_km_h": "speed",
-        "type": "type",
-        "distance": None,
-        "course": "course",
-        "hdop": "horizontal_dilution",
-        "pdop": "position_dilution",
-        "satellites_count": "satellites",
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: None,
+        GPSHarmonizedColumn.DATE: "date",
+        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.LATITUDE: "latitude",
+        GPSHarmonizedColumn.LONGITUDE: "longitude",
+        GPSHarmonizedColumn.ALTITUDE: "elevation",
+        GPSHarmonizedColumn.SPEED_KM_H: "speed",
+        GPSHarmonizedColumn.TYPE: "type",
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: "course",
+        GPSHarmonizedColumn.HDOP: "horizontal_dilution",
+        GPSHarmonizedColumn.PDOP: "position_dilution",
+        GPSHarmonizedColumn.SATELLITES_COUNT: "satellites",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def normalize_data(self):
+    def harmonize_data(self):
         self.data["datetime"] = pd.to_datetime(self.data["time"])
         self.data["date"] = self.data["datetime"].dt.date
         self.data["time"] = self.data["datetime"].dt.time
-        return super().normalize_data()
+        return super().harmonize_data()
 
     def __init__(self, stream):
         super().__init__(stream)

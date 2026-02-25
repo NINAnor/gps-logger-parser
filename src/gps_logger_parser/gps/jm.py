@@ -6,6 +6,7 @@ import pandas as pd
 
 from ..helpers import stream_chunk_contains
 from ..parser_base import Parsable, Parser
+from .columns import GPSHarmonizedColumn
 
 
 def signed(val, direction):
@@ -125,25 +126,24 @@ class GPS2JMParser8(GPS2JMParser7_5):
         "distance",
     ]
     MAPPINGS = {
-        "id": "",
-        "date": "date",
-        "time": "time",
-        "latitude": None,
-        "longitude": None,
-        "altitude": "altitude",
-        "speed_km_h": "speed",
-        "type": None,
-        "distance": "distance",
-        "course": None,
-        "hdop": None,
-        "pdop": None,
-        "satellites_count": "satellite",
-        "direction_deg": None,
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "",
+        GPSHarmonizedColumn.DATE: "date",
+        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.LATITUDE: None,
+        GPSHarmonizedColumn.LONGITUDE: None,
+        GPSHarmonizedColumn.ALTITUDE: "altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: "speed",
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: "distance",
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: None,
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: "satellite",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
     def _fix_content(self, data: str):
@@ -183,25 +183,24 @@ class GPS2JMParser8Alternative(Parser):
 
     # TODO: understand the fields first
     MAPPINGS = {
-        "id": "",
-        "date": "UTC_date",
-        "time": "UTC_time",
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "altitude_m",
-        "speed_km_h": "speed_km_h",
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": None,
-        "pdop": None,
-        "satellites_count": "satcount",
-        "direction_deg": "direction_deg",
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "",
+        GPSHarmonizedColumn.DATE: "UTC_date",
+        GPSHarmonizedColumn.TIME: "UTC_time",
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "altitude_m",
+        GPSHarmonizedColumn.SPEED_KM_H: "speed_km_h",
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: None,
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: "satcount",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
     def _fix_content(self, data: str):

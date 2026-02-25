@@ -1,3 +1,4 @@
+from .columns import GPSHarmonizedColumn
 from ..parser_base import CSVParser
 
 
@@ -18,24 +19,24 @@ class MatakiParser(CSVParser):
     ]
 
     MAPPINGS = {
-        "id": None,
-        "date": "datetime",
-        "time": None,
-        "latitude": "lat",
-        "longitude": "lon",
-        "altitude": "alt",
-        "speed_km_h": None,
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": "hdop",
-        "pdop": None,
-        "satellites_count": "numsat",
-        "temperature": "temp",
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: None,
+        GPSHarmonizedColumn.DATE: "datetime",
+        GPSHarmonizedColumn.TIME: None,
+        GPSHarmonizedColumn.LATITUDE: "lat",
+        GPSHarmonizedColumn.LONGITUDE: "lon",
+        GPSHarmonizedColumn.ALTITUDE: "alt",
+        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: "hdop",
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: "numsat",
+        GPSHarmonizedColumn.TEMPERATURE: "temp",
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
 

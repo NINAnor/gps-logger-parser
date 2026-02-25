@@ -1,3 +1,4 @@
+from .columns import GPSHarmonizedColumn
 from ..parser_base import CSVParser
 
 
@@ -22,24 +23,24 @@ class GPSUHo11(CSVParser):
     ]
 
     MAPPINGS = {
-        "id": "ID",
-        "date": "Date",
-        "time": "Time",
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "Altitude",
-        "speed_km_h": "Speed",
-        "type": "Type",
-        "distance": "Distance",
-        "course": "Course",
-        "hdop": None,
-        "pdop": None,
-        "satellites_count": None,
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": "Tripnr",
+        GPSHarmonizedColumn.ID: "ID",
+        GPSHarmonizedColumn.DATE: "Date",
+        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "Altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: "Speed",
+        GPSHarmonizedColumn.TYPE: "Type",
+        GPSHarmonizedColumn.DISTANCE: "Distance",
+        GPSHarmonizedColumn.COURSE: "Course",
+        GPSHarmonizedColumn.HDOP: None,
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: None,
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: "Tripnr",
     }
 
 

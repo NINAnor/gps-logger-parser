@@ -3,6 +3,7 @@ import io
 
 import pandas as pd
 
+from .columns import GPSHarmonizedColumn
 from ..helpers import stream_chunk_contains, stream_starts_with
 from ..parser_base import CSVParser, Parsable
 
@@ -33,24 +34,24 @@ class GPSCatTrackParser(CSVParser):
     ]
 
     MAPPINGS = {
-        "id": "",
-        "date": "Date",
-        "time": "Time",
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "Altitude",
-        "speed_km_h": "Speed [km/h]",
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": "HDOP",
-        "pdop": "PDOP",
-        "satellites_count": "Satellites",
-        "temperature": "Temperature [C]",
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "",
+        GPSHarmonizedColumn.DATE: "Date",
+        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "Altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: "Speed [km/h]",
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: "HDOP",
+        GPSHarmonizedColumn.PDOP: "PDOP",
+        GPSHarmonizedColumn.SATELLITES_COUNT: "Satellites",
+        GPSHarmonizedColumn.TEMPERATURE: "Temperature [C]",
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
     def __init__(self, parsable: Parsable):
@@ -111,24 +112,24 @@ class GPSCatTrack2(GPSCatTrackParser):
     DIVIDER = "-----\n"
 
     MAPPINGS = {
-        "id": "",
-        "date": "Date",
-        "time": "Time",
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "Altitude",
-        "speed_km_h": None,
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": "HDOP",
-        "pdop": "PDOP",
-        "satellites_count": "Satellites",
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "",
+        GPSHarmonizedColumn.DATE: "Date",
+        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "Altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: "HDOP",
+        GPSHarmonizedColumn.PDOP: "PDOP",
+        GPSHarmonizedColumn.SATELLITES_COUNT: "Satellites",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
 
@@ -152,24 +153,24 @@ class GPSCatTrack3(GPSCatTrackParser):
     DIVIDER = "--------\n"
 
     MAPPINGS = {
-        "id": "",
-        "date": "Date",
-        "time": "Time",
-        "latitude": "Latitude",
-        "longitude": "Longitude",
-        "altitude": "Altitude",
-        "speed_km_h": None,
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": "HDOP",
-        "pdop": "PDOP",
-        "satellites_count": "Satellites",
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: "",
+        GPSHarmonizedColumn.DATE: "Date",
+        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.LATITUDE: "Latitude",
+        GPSHarmonizedColumn.LONGITUDE: "Longitude",
+        GPSHarmonizedColumn.ALTITUDE: "Altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: "HDOP",
+        GPSHarmonizedColumn.PDOP: "PDOP",
+        GPSHarmonizedColumn.SATELLITES_COUNT: "Satellites",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
     def __init__(self, parsable: Parsable):

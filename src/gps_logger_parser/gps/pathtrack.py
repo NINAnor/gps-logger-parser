@@ -3,6 +3,7 @@ import io
 
 import pandas as pd
 
+from .columns import GPSHarmonizedColumn
 from ..helpers import stream_starts_with
 from ..parser_base import CSVParser, Parsable, Parser
 
@@ -32,27 +33,27 @@ class PathtrackParser(Parser):
     SEPARATOR = ","
 
     MAPPINGS = {
-        "id": None,
-        "date": "date",
-        "time": "time",
-        "latitude": "lat",
-        "longitude": "lon",
-        "altitude": "altitude",
-        "speed_km_h": None,
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": "accuracy",
-        "pdop": None,
-        "satellites_count": "satellites",
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: None,
+        GPSHarmonizedColumn.DATE: "date",
+        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.LATITUDE: "lat",
+        GPSHarmonizedColumn.LONGITUDE: "lon",
+        GPSHarmonizedColumn.ALTITUDE: "altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: "accuracy",
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: "satellites",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def normalize_data(self):
+    def harmonize_data(self):
         self.data["time"] = (
             self.data["hour"].astype(str)
             + ":"
@@ -67,7 +68,7 @@ class PathtrackParser(Parser):
             + ":"
             + self.data["year"].astype(str)
         )
-        return super().normalize_data()
+        return super().harmonize_data()
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)
@@ -138,27 +139,27 @@ class CSVPathtrack(CSVParser):
     ]
     SEPARATOR = ";"
     MAPPINGS = {
-        "id": None,
-        "date": "date",
-        "time": "time",
-        "latitude": "latitude",
-        "longitude": "longitude",
-        "altitude": "altitude",
-        "speed_km_h": None,
-        "type": None,
-        "distance": None,
-        "course": None,
-        "hdop": "accuracy_indicator",
-        "pdop": None,
-        "satellites_count": "satellites",
-        "temperature": None,
-        "solar_I_mA": None,
-        "bat_soc_pct": None,
-        "ring_nr": None,
-        "trip_nr": None,
+        GPSHarmonizedColumn.ID: None,
+        GPSHarmonizedColumn.DATE: "date",
+        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.LATITUDE: "latitude",
+        GPSHarmonizedColumn.LONGITUDE: "longitude",
+        GPSHarmonizedColumn.ALTITUDE: "altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: "accuracy_indicator",
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: "satellites",
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def normalize_data(self):
+    def harmonize_data(self):
         self.data["time"] = (
             self.data["hour"].astype(str)
             + ":"
@@ -173,7 +174,7 @@ class CSVPathtrack(CSVParser):
             + ":"
             + self.data["year"].astype(str)
         )
-        return super().normalize_data()
+        return super().harmonize_data()
 
 
 PARSERS = [
