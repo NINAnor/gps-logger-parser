@@ -43,7 +43,7 @@ class GPXParser(GPSHarmonizationMixin, Parser):
     }
 
     def harmonize_data(self, data):
-        data["time"] = pd.to_datetime(data["time"])
+        data["time"] = pd.to_datetime(data["time"], utc=True)
         return super().harmonize_data(data)
 
     def __init__(self, stream):
