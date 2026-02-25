@@ -98,6 +98,32 @@ def test_harmonized_output_schema(file, path, file_format):
                 f"GPS parser {file} is missing harmonized column '{col_name}'"
             )
 
+        # Verify geometry column has correct type and coordinates match lat/lon
+        geometry_field = table.schema.field("geometry")
+        assert "geoarrow.point" in str(geometry_field.type), (
+            f"Geometry column should be geoarrow.point type, got {geometry_field.type} in {file}"
+        )
+
+        # Convert to pandas and verify geometry coordinates match lat/lon
+        df = table.to_pandas()
+        if not df["latitude"].isna().all() and not df["longitude"].isna().all():
+            # Check first non-null geometry
+            for idx in range(min(3, len(df))):
+                if (
+                    not df["latitude"].isna().iloc[idx]
+                    and not df["longitude"].isna().iloc[idx]
+                ):
+                    geom = df["geometry"].iloc[idx]
+                    lat = df["latitude"].iloc[idx]
+                    lon = df["longitude"].iloc[idx]
+                    assert abs(geom["x"] - lon) < 1e-6, (
+                        f"Geometry x-coordinate {geom['x']} doesn't match longitude {lon} in {file}"
+                    )
+                    assert abs(geom["y"] - lat) < 1e-6, (
+                        f"Geometry y-coordinate {geom['y']} doesn't match latitude {lat} in {file}"
+                    )
+                    break
+
 
 @pytest.mark.timeout(10)
 @pytest.mark.parametrize("file,path,file_format", testdata_success)

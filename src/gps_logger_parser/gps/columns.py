@@ -8,6 +8,7 @@ class GPSHarmonizedColumn(str, Enum):
     TIMESTAMP = "timestamp"
     LATITUDE = "latitude"
     LONGITUDE = "longitude"
+    GEOMETRY = "geometry"
     ALTITUDE = "altitude"
     SPEED_KM_H = "speed_km_h"
     TYPE = "type"
@@ -29,6 +30,7 @@ GPS_HARMONIZED_COLUMN_TYPES = {
     GPSHarmonizedColumn.TIMESTAMP: "datetime64[ns]",
     GPSHarmonizedColumn.LATITUDE: "float64",
     GPSHarmonizedColumn.LONGITUDE: "float64",
+    GPSHarmonizedColumn.GEOMETRY: "geoarrow.point",
     GPSHarmonizedColumn.ALTITUDE: "float64",
     GPSHarmonizedColumn.SPEED_KM_H: "float64",
     GPSHarmonizedColumn.TYPE: "object",
