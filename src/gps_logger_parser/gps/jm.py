@@ -76,6 +76,31 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
         # Call parent harmonization first
         data = super().harmonize_data(data)
 
+        # Convert coordinates from degrees + decimal minutes to decimal degrees
+        # Latitude: degrees + (minutes / 60), with direction sign
+        lat_decimal_degrees = (
+            data["__original__latitude"].astype(int)
+            + data["__original__latitude_decimal"].astype(float) / 60
+        )
+        data["latitude"] = [
+            signed(lat, direction)
+            for lat, direction in zip(
+                lat_decimal_degrees, data["__original__n"], strict=False
+            )
+        ]
+
+        # Longitude: degrees + (minutes / 60), with direction sign
+        lon_decimal_degrees = (
+            data["__original__longitude"].astype(int)
+            + data["__original__longitude_decimal"].astype(float) / 60
+        )
+        data["longitude"] = [
+            signed(lon, direction)
+            for lon, direction in zip(
+                lon_decimal_degrees, data["__original__e"], strict=False
+            )
+        ]
+
         # Then create the timestamp column after original columns are prefixed
         if hasattr(self, "start_date") and self.start_date:
             # time column is now __original__time
@@ -197,24 +222,6 @@ class GPS2JMParser8(GPS2JMParser7_5):
         GPSHarmonizedColumn.RING_NR: None,
         GPSHarmonizedColumn.TRIP_NR: None,
     }
-
-    def harmonize_data(self, data):
-        # Combine start date with time from each row
-        # start_date is in format DD.MM.YYYY, time is HH:MM:SS
-        # Call parent harmonization first
-        data = super().harmonize_data(data)
-
-        # Then create the timestamp column after original columns are prefixed
-        if hasattr(self, "start_date") and self.start_date:
-            # time column is now __original__time
-            data["timestamp"] = pd.to_datetime(
-                self.start_date + " " + data["__original__time"],
-                format="%d.%m.%Y %H:%M:%S",
-                errors="coerce",
-            )
-        else:
-            raise NotImplementedError("Version 8 without start date is not supported")
-        return data
 
     def _fix_content(self, data: str):
         """
