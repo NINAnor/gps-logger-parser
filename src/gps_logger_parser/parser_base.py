@@ -66,13 +66,43 @@ class Parser:
     def get_outliers(self):
         return getattr(self, "OUTLIERS", {})
 
-    def harmonize_data(self):
+    def harmonize_data(self, data):
         """
-        Remap values parsed
+        Preserve original columns and remap values parsed using MAPPINGS.
+
+        Original columns are kept with '__original__' prefix.
+        Harmonized columns are created based on MAPPINGS.
+
+        Args:
+            data: DataFrame to harmonize
+
+        Returns:
+            Harmonized DataFrame with original columns prefixed
         """
+        # First, preserve original columns by renaming them with __original__ prefix
+        original_columns = {col: f"__original__{col}" for col in data.columns}
+        data = data.rename(columns=original_columns)
+
+        # Then create harmonized columns by copying and renaming from originals
         mappings = self.get_mappings()
         if mappings:
-            self.data = self.data.rename(mappings)
+            # mappings is {source_col: harmonized_col}
+            # We need to copy from __original__{source_col} to harmonized_col
+            for source_col, harmonized_col in mappings.items():
+                original_col_name = f"__original__{source_col}"
+                if original_col_name in data.columns:
+                    data[harmonized_col] = data[original_col_name]
+
+        return data
+
+    def get_harmonization_schema(self):
+        """
+        Return PyArrow schema for harmonized columns, or None for generic parsers.
+
+        Override this method in subclasses to provide explicit schema for
+        harmonized output.
+        """
+        return None
 
     def detect_outliers(self):
         """
@@ -91,9 +121,39 @@ class Parser:
             self.data["outlier"] = self.data.apply(check_conditions, axis=1)
 
     def as_table(self) -> pa.Table:
-        self.harmonize_data()
+        self.data = self.harmonize_data(self.data)
         # self.detect_outliers()
-        table = pa.Table.from_pandas(self.data, preserve_index=False)
+
+        # Use explicit schema if provided by subclass harmonization
+        # Note: schema only applies to harmonized columns, not __original__ ones
+        schema = self.get_harmonization_schema()
+        if schema:
+            # Separate harmonized and original columns
+            harmonized_cols = [
+                col for col in self.data.columns if not col.startswith("__original__")
+            ]
+            original_cols = [
+                col for col in self.data.columns if col.startswith("__original__")
+            ]
+
+            # Create table with explicit schema for harmonized columns
+            harmonized_df = self.data[harmonized_cols]
+            table = pa.Table.from_pandas(
+                harmonized_df, schema=schema, preserve_index=False
+            )
+
+            # Add original columns without schema (let PyArrow infer types)
+            if original_cols:
+                original_df = self.data[original_cols]
+                original_table = pa.Table.from_pandas(original_df, preserve_index=False)
+                # Append original columns to the table
+                for col_name in original_table.column_names:
+                    table = table.append_column(
+                        col_name, original_table.column(col_name)
+                    )
+        else:
+            table = pa.Table.from_pandas(self.data, preserve_index=False)
+
         table = table.append_column(
             "_datatype", pa.array([self.DATATYPE] * len(table), pa.string())
         )
