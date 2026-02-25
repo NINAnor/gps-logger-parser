@@ -35,28 +35,40 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
         "---- End of data ----",
     ]
 
-    # TODO: understand the fields first
-    # MAPPINGS = {
-    #     "id": "",
-    #     "date": None,
-    #     "time": None,
-    #     "latitude": None,
-    #     "longitude": None,
-    #     "altitude": None,
-    #     "speed_km_h": None,
-    #     "type": None,
-    #     "distance": None,
-    #     "course": None,
-    #     "hdop": None,
-    #     "pdop": None,
-    #     "satellites_count": None,
-    #     "direction_deg": None,
-    #     "temperature": None,
-    #     "solar_I_mA": None,
-    #     "bat_soc_pct": None,
-    #     "ring_nr": None,
-    #     "trip_nr": None,
-    # }
+    FIELDS = [
+        "date",
+        "time",
+        "latitude",
+        "latitude_decimal",
+        "n",
+        "longitude",
+        "longitude_decimal",
+        "e",
+        "satellite",
+        "voltage",
+        "speed",
+        "altitude",
+        "distance",
+    ]
+    MAPPINGS = {
+        GPSHarmonizedColumn.ID: "",
+        GPSHarmonizedColumn.TIMESTAMP: None,
+        GPSHarmonizedColumn.LATITUDE: None,
+        GPSHarmonizedColumn.LONGITUDE: None,
+        GPSHarmonizedColumn.ALTITUDE: None,
+        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: None,
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: None,
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
+    }
 
     def _fix_content(self, data):
         return data
