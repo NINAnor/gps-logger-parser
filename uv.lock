@@ -412,15 +412,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-environ"
-version = "0.12.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d4/3c/b2de27581c28929e3b33c5797e3d075c93541b4a8499ddc84dfd659d550f/django_environ-0.12.1.tar.gz", hash = "sha256:22859c6e905ab7637fa3348d1787543bb4492f38d761104a3ce0519b7b752845", size = 58257 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3a/1c/a6c55b856cb2c5824ee2fe5e27d6f54909ac7c228672b359ecbca99a6b41/django_environ-0.12.1-py2.py3-none-any.whl", hash = "sha256:064ba2d5082f833e6d7fe4def4928bde1eedc0248a417575da7db147aeec1c20", size = 20035 },
-]
-
-[[package]]
 name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -585,7 +576,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "chardet" },
-    { name = "django-environ" },
     { name = "fsspec", extra = ["s3"] },
     { name = "gpxpy" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -609,7 +599,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "chardet", specifier = ">=5.2.0" },
-    { name = "django-environ" },
     { name = "fsspec", extras = ["s3"], specifier = ">=2026.2.0" },
     { name = "gpxpy", specifier = ">=1.6.2" },
     { name = "pandas", specifier = ">=2.3.3" },

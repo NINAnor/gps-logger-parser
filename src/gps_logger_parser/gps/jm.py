@@ -93,7 +93,8 @@ class GPS2JMParser7_5(Parser):
             header = next(reader)
             if len(header) != len(self.FIELDS):
                 self._raise_not_supported(
-                    f"Stream have fields different than expected, {len(header)} != {len(self.FIELDS)}"
+                    f"Stream have fields different than expected, "
+                    f"{len(header)} != {len(self.FIELDS)}"
                 )
 
             self.data = pd.read_csv(
@@ -238,7 +239,8 @@ class GPS2JMParser8Alternative(Parser):
             header = next(reader)
             if len(header) != len(self.FIELDS):
                 self._raise_not_supported(
-                    f"Stream have fields different than expected, {len(header)} != {len(self.FIELDS)}"
+                    f"Stream have fields different than expected, "
+                    f"{len(header)} != {len(self.FIELDS)}"
                 )
 
             df = pd.read_csv(

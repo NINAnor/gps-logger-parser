@@ -128,7 +128,8 @@ class CSVParser(Parser):
     def _check_headers(self, header):
         if header != self.FIELDS:
             self._raise_not_supported(
-                f"Stream have a header different than expected, {header} != {self.FIELDS}"
+                f"Stream have a header different than expected, "
+                f"{header} != {self.FIELDS}"
             )
 
     def __init__(self, parsable: Parsable):

@@ -1,7 +1,7 @@
 from .axytrek import PARSERS as AXYTREK
 from .base import PARSERS as BASE
 from .catlog import PARSERS as CATLOG
-from .columns import GPSHarmonizedColumn, GPS_HARMONIZED_COLUMN_TYPES
+from .columns import GPS_HARMONIZED_COLUMN_TYPES, GPSHarmonizedColumn
 from .ecotone import PARSERS as ECOTONE
 from .gpx import GPXParser
 from .ho11 import PARSERS as HO11
@@ -12,6 +12,12 @@ from .mataki import PARSERS as MATAKI
 from .ornitela import PARSERS as ORNITELA
 from .pathtrack import PARSERS as PATHTRACK
 from .unknown import PARSERS as UNKNOWN
+
+__all__ = [
+    "GPS_HARMONIZED_COLUMN_TYPES",
+    "GPSHarmonizedColumn",
+    "PARSERS",
+]
 
 PARSERS = (
     [

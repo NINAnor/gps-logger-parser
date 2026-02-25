@@ -3,9 +3,9 @@ import io
 
 import pandas as pd
 
-from .columns import GPSHarmonizedColumn
 from ..helpers import stream_chunk_contains, stream_starts_with
 from ..parser_base import CSVParser, Parsable
+from .columns import GPSHarmonizedColumn
 
 
 class GPSCatTrackParser(CSVParser):
@@ -84,7 +84,8 @@ class GPSCatTrackParser(CSVParser):
             header = next(reader)
             if header != self.FIELDS:
                 self._raise_not_supported(
-                    f"Stream have fields different than expected, {header} != {self.FIELDS}"
+                    f"Stream have fields different than expected, "
+                    f"{header} != {self.FIELDS}"
                 )
 
             self.data = pd.read_csv(
@@ -203,7 +204,8 @@ class GPSCatTrack3(GPSCatTrackParser):
             header = next(reader)
             if header != self.FIELDS:
                 self._raise_not_supported(
-                    f"Stream have fields different than expected, {header} != {self.FIELDS}"
+                    f"Stream have fields different than expected, "
+                    f"{header} != {self.FIELDS}"
                 )
 
             # Ensure that the headers are present, then ignore them

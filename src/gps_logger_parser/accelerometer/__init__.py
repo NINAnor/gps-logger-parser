@@ -75,7 +75,7 @@ class AcceleratorParser(Parser):
         time, hour, minutes, seconds = re.search(self.TIME_REGEX, intro).groups()
 
         return datetime.datetime.strptime(
-            f'{date.replace(" ", "")} {time}', self.STRP_FORMAT
+            f"{date.replace(' ', '')} {time}", self.STRP_FORMAT
         )
 
     def get_frequency(self, intro):

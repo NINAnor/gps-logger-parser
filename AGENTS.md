@@ -3,3 +3,4 @@
 - ALWAYS read and copy the style of similar tests when adding new cases
 - AVOID shortening variable names, e.g., use version instead of ver, and requires_python instead of rp
 - ALWAYS use `uv` to run commands
+- ALWAYS make sure `ruff` does not return errors

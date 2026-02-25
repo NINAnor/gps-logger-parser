@@ -1,5 +1,5 @@
-from .columns import GPSHarmonizedColumn
 from ..parser_base import CSVParser
+from .columns import GPSHarmonizedColumn
 
 
 class GPSUHo11(CSVParser):

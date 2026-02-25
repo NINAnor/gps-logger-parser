@@ -2,8 +2,8 @@ import csv
 
 import pandas as pd
 
-from .columns import GPSHarmonizedColumn
 from ..parser_base import CSVParser, Parsable, Parser
+from .columns import GPSHarmonizedColumn
 
 FIELDS = [
     "DataID",
@@ -87,7 +87,8 @@ class GPSUnknownFormatParserWithEmptyColumns(Parser):
 
             if header != self.FIELDS:
                 self._raise_not_supported(
-                    f"Stream have a header different than expected, {header} != {self.FIELDS}"
+                    f"Stream have a header different than expected, "
+                    f"{header} != {self.FIELDS}"
                 )
 
             stream.seek(0)

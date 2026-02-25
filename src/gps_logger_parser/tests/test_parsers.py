@@ -79,22 +79,22 @@ def test_harmonized_output_schema(file, path, file_format):
     # Check that all required metadata columns are present with correct types
     column_names = table.column_names
     for col_name, expected_type in REQUIRED_METADATA_COLUMNS.items():
-        assert (
-            col_name in column_names
-        ), f"Required column '{col_name}' not found in {file}"
+        assert col_name in column_names, (
+            f"Required column '{col_name}' not found in {file}"
+        )
         actual_type = table.schema.field(col_name).type
-        assert (
-            actual_type == expected_type
-        ), f"Column '{col_name}' has type {actual_type}, expected {expected_type} in {file}"
+        assert actual_type == expected_type, (
+            f"Column '{col_name}' has type {actual_type}, expected {expected_type} in {file}"
+        )
 
     # For GPS parsers, check that all harmonized columns exist with correct types
     if file_format.startswith("gps_"):
         # Check that all harmonized columns are present
         for harmonized_col in GPSHarmonizedColumn:
             col_name = harmonized_col.value
-            assert (
-                col_name in column_names
-            ), f"GPS parser {file} is missing harmonized column '{col_name}'"
+            assert col_name in column_names, (
+                f"GPS parser {file} is missing harmonized column '{col_name}'"
+            )
 
             # Check that each harmonized column has the correct PyArrow type
             actual_type = table.schema.field(col_name).type
@@ -102,6 +102,6 @@ def test_harmonized_output_schema(file, path, file_format):
 
             # Allow nullable versions of types (e.g., int64 vs int64 with nulls)
             # PyArrow types should match exactly for our purposes
-            assert (
-                actual_type == expected_type
-            ), f"GPS parser {file}: column '{col_name}' has type {actual_type}, expected {expected_type}"
+            assert actual_type == expected_type, (
+                f"GPS parser {file}: column '{col_name}' has type {actual_type}, expected {expected_type}"
+            )

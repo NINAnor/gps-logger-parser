@@ -2,8 +2,8 @@ import csv
 
 import pyarrow.csv as pacsv
 
-from .columns import GPSHarmonizedColumn
 from ..parser_base import CSVParser, Parsable
+from .columns import GPSHarmonizedColumn
 
 
 def skip(row):
@@ -72,7 +72,8 @@ class AXYTREKParser(CSVParser):
             header = next(reader)
             if header != self.FIELDS:
                 self._raise_not_supported(
-                    f"Stream have a header different than expected, {header} != {self.FIELDS}"
+                    f"Stream have a header different than expected, "
+                    f"{header} != {self.FIELDS}"
                 )
 
         parse_options = pacsv.ParseOptions(

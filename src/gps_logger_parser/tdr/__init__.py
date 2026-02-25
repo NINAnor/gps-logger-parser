@@ -135,7 +135,8 @@ class PathtrackPressParser(Parser):
         header = next(reader)
         if len(header) != len(self.FIELDS):
             self._raise_not_supported(
-                f"Stream have a number of fields different than expected, {len(header)} != {len(self.FIELDS)}"
+                f"Stream have a number of fields different than expected, "
+                f"{len(header)} != {len(self.FIELDS)}"
             )
 
         self.data = pd.read_csv(
