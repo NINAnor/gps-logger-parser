@@ -1,8 +1,9 @@
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class InterrexParser(CSVParser):
+class InterrexParser(GPSHarmonizationMixin, CSVParser):
     """
     Parser for Interrex Logger
     """

@@ -6,9 +6,10 @@ import pandas as pd
 from ..helpers import stream_chunk_contains, stream_starts_with
 from ..parser_base import CSVParser, Parsable
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class GPSCatTrackParser(CSVParser):
+class GPSCatTrackParser(GPSHarmonizationMixin, CSVParser):
     """
     Parser for a format, its a GPS CSV like format
     with the following fields

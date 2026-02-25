@@ -4,6 +4,7 @@ import pyarrow.csv as pacsv
 
 from ..parser_base import CSVParser, Parsable
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
 def skip(row):
@@ -13,7 +14,7 @@ def skip(row):
     return "error"
 
 
-class AXYTREKParser(CSVParser):
+class AXYTREKParser(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_axytrek"
     FIELDS = [
         "TagID",

@@ -13,17 +13,17 @@ IGNORED_FILES = [
     ".gitkeep",
 ]
 IGNORED_DIRS = [
-    "gps_gpx",
-    "gps_cattrack",
-    "gps_igotugl",
-    "gps_unknown",
-    "gps_2jm",
+    # "gps_gpx",
+    # "gps_cattrack",
+    # "gps_igotugl",
+    # "gps_unknown",
+    # "gps_2jm",
     "accelerometer",
-    "gps_pathtrack",
+    # "gps_pathtrack",
     "tdr",
-    "gps_ho11",
-    "gps_axytrek",
-    "gps_ecotone",
+    # "gps_ho11",
+    # "gps_axytrek",
+    # "gps_ecotone",
 ]
 
 # Define expected metadata columns that should be present in all harmonized outputs
@@ -105,3 +105,27 @@ def test_harmonized_output_schema(file, path, file_format):
             assert actual_type == expected_type, (
                 f"GPS parser {file}: column '{col_name}' has type {actual_type}, expected {expected_type}"
             )
+
+
+@pytest.mark.parametrize("file,path,file_format", testdata_success)
+def test_original_columns_preserved(file, path, file_format):
+    """
+    Test that original columns are preserved with __original__ prefix
+    for all parser types.
+    """
+    parser_instance = detect_file(path)
+    table = parser_instance.as_table()
+
+    # Check that __original__ columns exist
+    original_cols = [
+        col for col in table.column_names if col.startswith("__original__")
+    ]
+    assert len(original_cols) > 0, (
+        f"Parser {file} should have at least one __original__ column"
+    )
+
+    # Verify that original columns have the expected prefix format
+    for col in original_cols:
+        assert col.startswith("__original__"), (
+            f"Original column '{col}' does not have __original__ prefix"
+        )

@@ -1,8 +1,9 @@
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class OrnitelaParser(CSVParser):
+class OrnitelaParser(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_ornitela"
     FIELDS = [
         "device_id",

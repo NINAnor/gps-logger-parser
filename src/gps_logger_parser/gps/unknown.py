@@ -4,6 +4,7 @@ import pandas as pd
 
 from ..parser_base import CSVParser, Parsable, Parser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 FIELDS = [
     "DataID",
@@ -42,7 +43,7 @@ MAPPINGS = {
 }
 
 
-class GPSUnknownFormatParser(CSVParser):
+class GPSUnknownFormatParser(GPSHarmonizationMixin, CSVParser):
     """
     Parser for a format, its a GPS CSV like format
     with the following fields
@@ -55,7 +56,7 @@ class GPSUnknownFormatParser(CSVParser):
     MAPPINGS = MAPPINGS
 
 
-class GPSUnknownFormatParserWithEmptyColumns(Parser):
+class GPSUnknownFormatParserWithEmptyColumns(GPSHarmonizationMixin, Parser):
     """
     Parser for a format, its a GPS CSV like format
     with the following fields

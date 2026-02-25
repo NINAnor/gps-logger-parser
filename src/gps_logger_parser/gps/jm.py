@@ -7,6 +7,7 @@ import pandas as pd
 from ..helpers import stream_chunk_contains
 from ..parser_base import Parsable, Parser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
 def signed(val, direction):
@@ -19,7 +20,7 @@ def signed(val, direction):
 # Earth&Ocean mGPS-2
 
 
-class GPS2JMParser7_5(Parser):
+class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
     """
     Parser for 2Jm format v 7.5
     """
@@ -156,7 +157,7 @@ class GPS2JMParser8(GPS2JMParser7_5):
         return regex.sub(" ", data)
 
 
-class GPS2JMParser8Alternative(Parser):
+class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
     """
     Parser for 2Jm format v8
 
