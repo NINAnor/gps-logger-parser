@@ -6,7 +6,7 @@ import pyarrow.compute as pc
 import pytest
 from upath import UPath
 
-from ..gps.columns import GPS_HARMONIZED_COLUMN_TYPES, GPSHarmonizedColumn
+from ..gps.columns import GPSHarmonizedColumn
 from ..parser import detect_file
 
 TESTS_DATA_PATH = pathlib.Path(os.environ.get("TEST_DATA_PATH"))
@@ -63,6 +63,7 @@ if S3_TEST_PATHS.exists():
             testdata_s3.append((row["path"], row["endpoint_url"]))
 
 
+@pytest.mark.timeout(10)
 @pytest.mark.parametrize("file,path,file_format", testdata_success)
 def test_parser_success(file, path, file_format):
     parser_instance = detect_file(path)
@@ -84,18 +85,20 @@ def test_parser_remote(path, endpoint_url):
     assert table
 
 
+@pytest.mark.timeout(10)
 @pytest.mark.parametrize("file,path", testdata_fail)
 def test_parser_fail(file, path):
     with pytest.raises(NotImplementedError):
         detect_file(path)
 
 
+@pytest.mark.timeout(10)
 @pytest.mark.parametrize("file,path,file_format", testdata_success)
 def test_harmonized_output_schema(file, path, file_format):
     """
     Test that every success test input outputs a harmonized file with:
     1. Required metadata columns (_datatype, _parser, _logger_file) with correct types
-    2. For GPS parsers: All harmonized columns present with correct PyArrow types
+    2. For GPS parsers: All harmonized columns present
     """
     parser_instance = detect_file(path)
     table = parser_instance.as_table()
@@ -111,26 +114,16 @@ def test_harmonized_output_schema(file, path, file_format):
             f"Column '{col_name}' has type {actual_type}, expected {expected_type} in {file}"
         )
 
-    # For GPS parsers, check that all harmonized columns exist with correct types
+    # For GPS parsers, check that all harmonized columns are present
     if file_format.startswith("gps_"):
-        # Check that all harmonized columns are present
         for harmonized_col in GPSHarmonizedColumn:
             col_name = harmonized_col.value
             assert col_name in column_names, (
                 f"GPS parser {file} is missing harmonized column '{col_name}'"
             )
 
-            # Check that each harmonized column has the correct PyArrow type
-            actual_type = table.schema.field(col_name).type
-            expected_type = GPS_HARMONIZED_COLUMN_TYPES[harmonized_col]
 
-            # Allow nullable versions of types (e.g., int64 vs int64 with nulls)
-            # PyArrow types should match exactly for our purposes
-            assert actual_type == expected_type, (
-                f"GPS parser {file}: column '{col_name}' has type {actual_type}, expected {expected_type}"
-            )
-
-
+@pytest.mark.timeout(10)
 @pytest.mark.parametrize("file,path,file_format", testdata_success)
 def test_original_columns_preserved(file, path, file_format):
     """

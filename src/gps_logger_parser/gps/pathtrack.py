@@ -35,8 +35,7 @@ class PathtrackParser(GPSHarmonizationMixin, Parser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "date",
-        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "lat",
         GPSHarmonizedColumn.LONGITUDE: "lon",
         GPSHarmonizedColumn.ALTITUDE: "altitude",
@@ -55,19 +54,21 @@ class PathtrackParser(GPSHarmonizationMixin, Parser):
     }
 
     def harmonize_data(self, data):
-        data["time"] = (
-            data["hour"].astype(str)
+        # Combine date and time fields into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["year"].astype(str)
+            + "/"
+            + data["month"].astype(str)
+            + "/"
+            + data["day"].astype(str)
+            + " "
+            + data["hour"].astype(str)
             + ":"
             + data["minute"].astype(str)
             + ":"
-            + data["second"].astype(str)
-        )
-        data["date"] = (
-            data["day"].astype(str)
-            + "/"
-            + data["month"].astype(str)
-            + ":"
-            + data["year"].astype(str)
+            + data["second"].astype(str),
+            format="%Y/%m/%d %H:%M:%S",
+            errors="coerce",
         )
         return super().harmonize_data(data)
 
@@ -142,8 +143,7 @@ class CSVPathtrack(GPSHarmonizationMixin, CSVParser):
     SEPARATOR = ";"
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "date",
-        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "latitude",
         GPSHarmonizedColumn.LONGITUDE: "longitude",
         GPSHarmonizedColumn.ALTITUDE: "altitude",
@@ -162,19 +162,21 @@ class CSVPathtrack(GPSHarmonizationMixin, CSVParser):
     }
 
     def harmonize_data(self, data):
-        data["time"] = (
-            data["hour"].astype(str)
+        # Combine date and time fields into a timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["year"].astype(str)
+            + "/"
+            + data["month"].astype(str)
+            + "/"
+            + data["day"].astype(str)
+            + " "
+            + data["hour"].astype(str)
             + ":"
             + data["minute"].astype(str)
             + ":"
-            + data["second"].astype(str)
-        )
-        data["date"] = (
-            data["day"].astype(str)
-            + "/"
-            + data["month"].astype(str)
-            + ":"
-            + data["year"].astype(str)
+            + data["second"].astype(str),
+            format="%Y/%m/%d %H:%M:%S",
+            errors="coerce",
         )
         return super().harmonize_data(data)
 
