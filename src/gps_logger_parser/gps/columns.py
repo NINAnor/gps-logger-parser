@@ -9,6 +9,7 @@ class GPSHarmonizedColumn(str, Enum):
     ID = "id"
     DATE = "date"
     TIME = "time"
+    TIMESTAMP = "timestamp"
     LATITUDE = "latitude"
     LONGITUDE = "longitude"
     ALTITUDE = "altitude"
@@ -29,8 +30,9 @@ class GPSHarmonizedColumn(str, Enum):
 # PyArrow type mapping for each harmonized column
 GPS_HARMONIZED_COLUMN_TYPES = {
     GPSHarmonizedColumn.ID: pa.string(),
-    GPSHarmonizedColumn.DATE: pa.string(),  # Can be date32() after parsing
-    GPSHarmonizedColumn.TIME: pa.string(),  # Can be time64('us') after parsing
+    GPSHarmonizedColumn.DATE: pa.string(),
+    GPSHarmonizedColumn.TIME: pa.string(),
+    GPSHarmonizedColumn.TIMESTAMP: pa.timestamp("us"),
     GPSHarmonizedColumn.LATITUDE: pa.float64(),
     GPSHarmonizedColumn.LONGITUDE: pa.float64(),
     GPSHarmonizedColumn.ALTITUDE: pa.float64(),

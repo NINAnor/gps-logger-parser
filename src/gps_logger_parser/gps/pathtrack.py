@@ -6,9 +6,10 @@ import pandas as pd
 from ..helpers import stream_starts_with
 from ..parser_base import CSVParser, Parsable, Parser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class PathtrackParser(Parser):
+class PathtrackParser(GPSHarmonizationMixin, Parser):
     DATATYPE = "gps_pathtrack"
     DIVIDER = "*" * 85 + "\n"
     HEAD = DIVIDER + "PathTrack Archival Tracking System Results File"
@@ -53,22 +54,22 @@ class PathtrackParser(Parser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def harmonize_data(self):
-        self.data["time"] = (
-            self.data["hour"].astype(str)
+    def harmonize_data(self, data):
+        data["time"] = (
+            data["hour"].astype(str)
             + ":"
-            + self.data["minute"].astype(str)
+            + data["minute"].astype(str)
             + ":"
-            + self.data["second"].astype(str)
+            + data["second"].astype(str)
         )
-        self.data["date"] = (
-            self.data["day"].astype(str)
+        data["date"] = (
+            data["day"].astype(str)
             + "/"
-            + self.data["month"].astype(str)
+            + data["month"].astype(str)
             + ":"
-            + self.data["year"].astype(str)
+            + data["year"].astype(str)
         )
-        return super().harmonize_data()
+        return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)
@@ -118,7 +119,7 @@ class PathtrackParserNoUnknown(PathtrackParser):
     )
 
 
-class CSVPathtrack(CSVParser):
+class CSVPathtrack(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_pathtrack"
     FIELDS = [
         "day",
@@ -160,22 +161,22 @@ class CSVPathtrack(CSVParser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def harmonize_data(self):
-        self.data["time"] = (
-            self.data["hour"].astype(str)
+    def harmonize_data(self, data):
+        data["time"] = (
+            data["hour"].astype(str)
             + ":"
-            + self.data["minute"].astype(str)
+            + data["minute"].astype(str)
             + ":"
-            + self.data["second"].astype(str)
+            + data["second"].astype(str)
         )
-        self.data["date"] = (
-            self.data["day"].astype(str)
+        data["date"] = (
+            data["day"].astype(str)
             + "/"
-            + self.data["month"].astype(str)
+            + data["month"].astype(str)
             + ":"
-            + self.data["year"].astype(str)
+            + data["year"].astype(str)
         )
-        return super().harmonize_data()
+        return super().harmonize_data(data)
 
 
 PARSERS = [

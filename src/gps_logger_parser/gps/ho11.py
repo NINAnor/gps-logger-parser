@@ -1,8 +1,9 @@
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class GPSUHo11(CSVParser):
+class GPSUHo11(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_ho11"
     SEPARATOR = ";"
     FIELDS = [

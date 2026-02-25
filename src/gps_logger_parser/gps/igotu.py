@@ -1,8 +1,9 @@
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class IGotU_GT_Parser(CSVParser):
+class IGotU_GT_Parser(GPSHarmonizationMixin, CSVParser):
     """
     Parser for IGotU_GT X version Logger
     """

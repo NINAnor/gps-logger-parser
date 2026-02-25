@@ -1,8 +1,9 @@
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class GPSParser(CSVParser):
+class GPSParser(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps"
     FIELDS = [
         "device_id",
