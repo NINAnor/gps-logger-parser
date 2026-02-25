@@ -1,5 +1,6 @@
 import csv
 
+import pandas as pd
 import pyarrow.csv as pacsv
 
 from ..parser_base import CSVParser, Parsable
@@ -39,8 +40,7 @@ class AXYTREKParser(GPSHarmonizationMixin, CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "TagID",
-        GPSHarmonizedColumn.DATE: "Date",
-        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "location-lat",
         GPSHarmonizedColumn.LONGITUDE: "location-lon",
         GPSHarmonizedColumn.ALTITUDE: "height-above-msl",
@@ -57,6 +57,13 @@ class AXYTREKParser(GPSHarmonizationMixin, CSVParser):
         GPSHarmonizedColumn.RING_NR: None,
         GPSHarmonizedColumn.TRIP_NR: None,
     }
+
+    def harmonize_data(self, data):
+        # Combine Date and Time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["Date"] + " " + data["Time"], errors="coerce"
+        )
+        return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)

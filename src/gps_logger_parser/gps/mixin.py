@@ -8,7 +8,6 @@ GPS_HARMONIZED_COLUMN_TYPES specification.
 
 import numpy as np
 import pandas as pd
-import pyarrow as pa
 
 from .columns import GPS_HARMONIZED_COLUMN_TYPES, GPSHarmonizedColumn
 
@@ -38,47 +37,38 @@ class GPSHarmonizationMixin:
         # Then ensure all GPS harmonized columns exist with correct types
         for harmonized_col in GPSHarmonizedColumn:
             col_name = harmonized_col.value
-
-            # Map PyArrow type to pandas dtype
-            pa_type = GPS_HARMONIZED_COLUMN_TYPES[harmonized_col]
-            if pa_type == pa.string():
-                pd_dtype = "object"
-            elif pa_type == pa.float64():
-                pd_dtype = "float64"
-            elif pa_type == pa.int64():
-                pd_dtype = "Int64"  # Nullable integer
-            else:
-                pd_dtype = "object"
+            pd_dtype = GPS_HARMONIZED_COLUMN_TYPES[harmonized_col]
 
             if col_name not in data.columns:
                 # Add column with null values and appropriate dtype
-                data[col_name] = np.nan if pd_dtype == "float64" else None
+                if pd_dtype == "float64":
+                    data[col_name] = np.nan
+                elif pd_dtype == "datetime64[ns]":
+                    data[col_name] = pd.NaT
+                else:
+                    data[col_name] = None
 
             # Ensure column has the correct dtype
             col_exists = col_name in data.columns
             if col_exists and data[col_name].dtype != pd_dtype:
-                # Convert to correct dtype, handling potential type
-                # conversion issues
+                # Convert to correct dtype, handling potential type conversion issues
                 if pd_dtype == "object":
-                    data[col_name] = data[col_name].astype(str)
+                    if data[col_name].dtype != "object":
+                        data[col_name] = data[col_name].astype(str)
                 elif pd_dtype == "float64":
                     data[col_name] = pd.to_numeric(data[col_name], errors="coerce")
                 elif pd_dtype == "Int64":
-                    data[col_name] = pd.to_numeric(
-                        data[col_name], errors="coerce", downcast="integer"
-                    ).astype("Int64")
+                    # Convert to numeric first, then to nullable Int64
+                    data[col_name] = pd.to_numeric(data[col_name], errors="coerce")
+                    # Round to handle floating point values before conversion
+                    data[col_name] = data[col_name].round().astype("Int64")
+                elif pd_dtype == "datetime64[ns]":
+                    data[col_name] = pd.to_datetime(data[col_name], errors="coerce")
 
         return data
 
     def get_harmonization_schema(self):
         """
-        Return PyArrow schema with GPS harmonized columns
+        Return None - we use pandas types directly, not PyArrow schemas
         """
-        # Build schema with harmonized columns
-        schema_fields = []
-        for harmonized_col in GPSHarmonizedColumn:
-            col_name = harmonized_col.value
-            col_type = GPS_HARMONIZED_COLUMN_TYPES[harmonized_col]
-            schema_fields.append(pa.field(col_name, col_type))
-
-        return pa.schema(schema_fields)
+        return None

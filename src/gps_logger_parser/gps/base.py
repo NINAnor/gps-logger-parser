@@ -1,3 +1,5 @@
+import pandas as pd
+
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
 from .mixin import GPSHarmonizationMixin
@@ -34,8 +36,7 @@ class GPSParser(GPSHarmonizationMixin, CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "device_id",
-        GPSHarmonizedColumn.DATE: "UTC_date",
-        GPSHarmonizedColumn.TIME: "UTC_time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude_m",
@@ -52,6 +53,13 @@ class GPSParser(GPSHarmonizationMixin, CSVParser):
         GPSHarmonizedColumn.RING_NR: None,
         GPSHarmonizedColumn.TRIP_NR: None,
     }
+
+    def harmonize_data(self, data):
+        # Combine Date and Time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["UTC_date"] + " " + data["UTC_time"], errors="coerce"
+        )
+        return super().harmonize_data(data)
 
 
 PARSERS = [

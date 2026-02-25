@@ -129,8 +129,7 @@ class GPS2JMParser8(GPS2JMParser7_5):
     ]
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "",
-        GPSHarmonizedColumn.DATE: "date",
-        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: None,
         GPSHarmonizedColumn.LONGITUDE: None,
         GPSHarmonizedColumn.ALTITUDE: "altitude",
@@ -147,6 +146,17 @@ class GPS2JMParser8(GPS2JMParser7_5):
         GPSHarmonizedColumn.RING_NR: None,
         GPSHarmonizedColumn.TRIP_NR: None,
     }
+
+    def harmonize_data(self, data):
+        # Combine date and time columns into timestamp
+        # date is just day number (e.g., 29), time is HH:MM:SS
+        # This will result in a datetime with year 1900 by default
+        data["timestamp"] = pd.to_datetime(
+            data["date"].astype(str) + " " + data["time"],
+            format="%d %H:%M:%S",
+            errors="coerce",
+        )
+        return super().harmonize_data(data)
 
     def _fix_content(self, data: str):
         """
@@ -186,8 +196,7 @@ class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
     # TODO: understand the fields first
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "",
-        GPSHarmonizedColumn.DATE: "UTC_date",
-        GPSHarmonizedColumn.TIME: "UTC_time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "altitude_m",
@@ -204,6 +213,13 @@ class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
         GPSHarmonizedColumn.RING_NR: None,
         GPSHarmonizedColumn.TRIP_NR: None,
     }
+
+    def harmonize_data(self, data):
+        # Combine UTC_date and UTC_time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["UTC_date"] + " " + data["UTC_time"], errors="coerce"
+        )
+        return super().harmonize_data(data)
 
     def _fix_content(self, data: str):
         """
