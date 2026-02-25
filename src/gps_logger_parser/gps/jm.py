@@ -116,6 +116,10 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
                 format="%d %H:%M:%S",
                 errors="coerce",
             )
+
+        # Recreate geometry column now that lat/lon are finalized
+        data = self._create_geometry_column(data)
+
         return data
 
     def _fix_content(self, data):
