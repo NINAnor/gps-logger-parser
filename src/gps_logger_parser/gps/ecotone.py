@@ -1,7 +1,8 @@
 from ..parser_base import CSVParser
+from .mixin import GPSHarmonizationMixin
 
 
-class EcotoneParser(CSVParser):
+class EcotoneParser(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_ecotone"
     FIELDS = [x for x in range(0, 9)]
     SEPARATOR = ";"

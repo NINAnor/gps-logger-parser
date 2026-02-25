@@ -1,8 +1,11 @@
+import pandas as pd
+
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class IGotU_GT_Parser(CSVParser):
+class IGotU_GT_Parser(GPSHarmonizationMixin, CSVParser):
     """
     Parser for IGotU_GT X version Logger
     """
@@ -23,8 +26,7 @@ class IGotU_GT_Parser(CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "Date",
-        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude",
@@ -41,6 +43,13 @@ class IGotU_GT_Parser(CSVParser):
         GPSHarmonizedColumn.RING_NR: None,
         GPSHarmonizedColumn.TRIP_NR: None,
     }
+
+    def harmonize_data(self, data):
+        # Combine Date and Time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["Date"] + " " + data["Time"], errors="coerce"
+        )
+        return super().harmonize_data(data)
 
 
 class IGotU_GT_TabSeparatedParser(IGotU_GT_Parser):
@@ -65,8 +74,7 @@ class GPS_IGOTUGL(IGotU_GT_Parser):
     ]
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "",
-        GPSHarmonizedColumn.DATE: "Date",
-        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude",

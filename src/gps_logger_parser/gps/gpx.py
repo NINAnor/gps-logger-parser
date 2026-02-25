@@ -4,9 +4,10 @@ import pandas as pd
 from ..helpers import stream_chunk_contains
 from ..parser_base import Parser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class GPXParser(Parser):
+class GPXParser(GPSHarmonizationMixin, Parser):
     DATATYPE = "gps_gpx"
     FIELDS = [
         "latitude",
@@ -23,8 +24,7 @@ class GPXParser(Parser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "date",
-        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.TIMESTAMP: "time",
         GPSHarmonizedColumn.LATITUDE: "latitude",
         GPSHarmonizedColumn.LONGITUDE: "longitude",
         GPSHarmonizedColumn.ALTITUDE: "elevation",
@@ -42,11 +42,9 @@ class GPXParser(Parser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def harmonize_data(self):
-        self.data["datetime"] = pd.to_datetime(self.data["time"])
-        self.data["date"] = self.data["datetime"].dt.date
-        self.data["time"] = self.data["datetime"].dt.time
-        return super().harmonize_data()
+    def harmonize_data(self, data):
+        data["time"] = pd.to_datetime(data["time"], utc=True)
+        return super().harmonize_data(data)
 
     def __init__(self, stream):
         super().__init__(stream)

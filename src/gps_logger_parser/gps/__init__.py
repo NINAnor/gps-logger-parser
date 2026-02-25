@@ -9,6 +9,7 @@ from .igotu import PARSERS as IGOUT
 from .interrex import PARSERS as INTERREX
 from .jm import PARSERS as JM
 from .mataki import PARSERS as MATAKI
+from .mixin import GPSHarmonizationMixin
 from .ornitela import PARSERS as ORNITELA
 from .pathtrack import PARSERS as PATHTRACK
 from .unknown import PARSERS as UNKNOWN
@@ -16,6 +17,7 @@ from .unknown import PARSERS as UNKNOWN
 __all__ = [
     "GPS_HARMONIZED_COLUMN_TYPES",
     "GPSHarmonizedColumn",
+    "GPSHarmonizationMixin",
     "PARSERS",
 ]
 

@@ -101,22 +101,22 @@ class PathtrackPressParser(Parser):
     OUTLIERS = None
     SEPARATOR = ","
 
-    def harmonize_data(self):
-        self.data["time"] = (
-            self.data["hour"].astype(str)
+    def harmonize_data(self, data):
+        data["time"] = (
+            data["hour"].astype(str)
             + ":"
-            + self.data["minute"].astype(str)
+            + data["minute"].astype(str)
             + ":"
-            + self.data["second"].astype(str)
+            + data["second"].astype(str)
         )
-        self.data["date"] = (
-            self.data["day"].astype(str)
+        data["date"] = (
+            data["day"].astype(str)
             + "/"
-            + self.data["month"].astype(str)
+            + data["month"].astype(str)
             + ":"
-            + self.data["year"].astype(str)
+            + data["year"].astype(str)
         )
-        return super().harmonize_data()
+        return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)

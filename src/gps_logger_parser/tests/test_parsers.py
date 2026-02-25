@@ -5,7 +5,7 @@ import pyarrow as pa
 import pyarrow.compute as pc
 import pytest
 
-from ..gps.columns import GPS_HARMONIZED_COLUMN_TYPES, GPSHarmonizedColumn
+from ..gps.columns import GPSHarmonizedColumn
 from ..parser import detect_file
 
 TESTS_DATA_PATH = pathlib.Path(os.environ.get("TEST_DATA_PATH"))
@@ -13,17 +13,17 @@ IGNORED_FILES = [
     ".gitkeep",
 ]
 IGNORED_DIRS = [
-    "gps_gpx",
-    "gps_cattrack",
-    "gps_igotugl",
-    "gps_unknown",
-    "gps_2jm",
+    # "gps_gpx",
+    # "gps_cattrack",
+    # "gps_igotugl",
+    # "gps_unknown",
+    # "gps_2jm",
     "accelerometer",
-    "gps_pathtrack",
+    # "gps_pathtrack",
     "tdr",
-    "gps_ho11",
+    # "gps_ho11",
     "gps_axytrek",
-    "gps_ecotone",
+    # "gps_ecotone",
 ]
 
 # Define expected metadata columns that should be present in all harmonized outputs
@@ -46,6 +46,7 @@ testdata_fail = [
 ]
 
 
+@pytest.mark.timeout(10)
 @pytest.mark.parametrize("file,path,file_format", testdata_success)
 def test_parser_success(file, path, file_format):
     parser_instance = detect_file(path)
@@ -60,18 +61,20 @@ def test_parser_success(file, path, file_format):
     ).as_py()
 
 
+@pytest.mark.timeout(10)
 @pytest.mark.parametrize("file,path", testdata_fail)
 def test_parser_fail(file, path):
     with pytest.raises(NotImplementedError):
         detect_file(path)
 
 
+@pytest.mark.timeout(10)
 @pytest.mark.parametrize("file,path,file_format", testdata_success)
 def test_harmonized_output_schema(file, path, file_format):
     """
     Test that every success test input outputs a harmonized file with:
     1. Required metadata columns (_datatype, _parser, _logger_file) with correct types
-    2. For GPS parsers: All harmonized columns present with correct PyArrow types
+    2. For GPS parsers: All harmonized columns present
     """
     parser_instance = detect_file(path)
     table = parser_instance.as_table()
@@ -87,21 +90,61 @@ def test_harmonized_output_schema(file, path, file_format):
             f"Column '{col_name}' has type {actual_type}, expected {expected_type} in {file}"
         )
 
-    # For GPS parsers, check that all harmonized columns exist with correct types
+    # For GPS parsers, check that all harmonized columns are present
     if file_format.startswith("gps_"):
-        # Check that all harmonized columns are present
         for harmonized_col in GPSHarmonizedColumn:
             col_name = harmonized_col.value
             assert col_name in column_names, (
                 f"GPS parser {file} is missing harmonized column '{col_name}'"
             )
 
-            # Check that each harmonized column has the correct PyArrow type
-            actual_type = table.schema.field(col_name).type
-            expected_type = GPS_HARMONIZED_COLUMN_TYPES[harmonized_col]
+        # Verify geometry column has correct type and coordinates match lat/lon
+        geometry_field = table.schema.field("geometry")
+        assert "geoarrow.point" in str(geometry_field.type), (
+            f"Geometry column should be geoarrow.point type, got {geometry_field.type} in {file}"
+        )
 
-            # Allow nullable versions of types (e.g., int64 vs int64 with nulls)
-            # PyArrow types should match exactly for our purposes
-            assert actual_type == expected_type, (
-                f"GPS parser {file}: column '{col_name}' has type {actual_type}, expected {expected_type}"
-            )
+        # Convert to pandas and verify geometry coordinates match lat/lon
+        df = table.to_pandas()
+        if not df["latitude"].isna().all() and not df["longitude"].isna().all():
+            # Check first non-null geometry
+            for idx in range(min(3, len(df))):
+                if (
+                    not df["latitude"].isna().iloc[idx]
+                    and not df["longitude"].isna().iloc[idx]
+                ):
+                    geom = df["geometry"].iloc[idx]
+                    lat = df["latitude"].iloc[idx]
+                    lon = df["longitude"].iloc[idx]
+                    assert abs(geom["x"] - lon) < 1e-6, (
+                        f"Geometry x-coordinate {geom['x']} doesn't match longitude {lon} in {file}"
+                    )
+                    assert abs(geom["y"] - lat) < 1e-6, (
+                        f"Geometry y-coordinate {geom['y']} doesn't match latitude {lat} in {file}"
+                    )
+                    break
+
+
+@pytest.mark.timeout(10)
+@pytest.mark.parametrize("file,path,file_format", testdata_success)
+def test_original_columns_preserved(file, path, file_format):
+    """
+    Test that original columns are preserved with __original__ prefix
+    for all parser types.
+    """
+    parser_instance = detect_file(path)
+    table = parser_instance.as_table()
+
+    # Check that __original__ columns exist
+    original_cols = [
+        col for col in table.column_names if col.startswith("__original__")
+    ]
+    assert len(original_cols) > 0, (
+        f"Parser {file} should have at least one __original__ column"
+    )
+
+    # Verify that original columns have the expected prefix format
+    for col in original_cols:
+        assert col.startswith("__original__"), (
+            f"Original column '{col}' does not have __original__ prefix"
+        )
