@@ -31,8 +31,7 @@ class InterrexParser(GPSHarmonizationMixin, CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "UUID",
-        GPSHarmonizedColumn.DATE: "Collecting time",
-        GPSHarmonizedColumn.TIME: None,
+        GPSHarmonizedColumn.TIMESTAMP: "Collecting time",
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude",

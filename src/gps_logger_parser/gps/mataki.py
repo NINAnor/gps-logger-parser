@@ -21,8 +21,7 @@ class MatakiParser(GPSHarmonizationMixin, CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "datetime",
-        GPSHarmonizedColumn.TIME: None,
+        GPSHarmonizedColumn.TIMESTAMP: "datetime",
         GPSHarmonizedColumn.LATITUDE: "lat",
         GPSHarmonizedColumn.LONGITUDE: "lon",
         GPSHarmonizedColumn.ALTITUDE: "alt",

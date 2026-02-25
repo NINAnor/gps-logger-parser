@@ -23,8 +23,7 @@ FIELDS = [
 
 MAPPINGS = {
     GPSHarmonizedColumn.ID: "DataID",
-    GPSHarmonizedColumn.DATE: "Date",
-    GPSHarmonizedColumn.TIME: "Time",
+    GPSHarmonizedColumn.TIMESTAMP: None,
     GPSHarmonizedColumn.LATITUDE: "Latitude",
     GPSHarmonizedColumn.LONGITUDE: "Longitude",
     GPSHarmonizedColumn.ALTITUDE: "Altitude",
@@ -55,6 +54,13 @@ class GPSUnknownFormatParser(GPSHarmonizationMixin, CSVParser):
 
     MAPPINGS = MAPPINGS
 
+    def harmonize_data(self, data):
+        # Combine Date and Time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["Date"] + " " + data["Time"], errors="coerce"
+        )
+        return super().harmonize_data(data)
+
 
 class GPSUnknownFormatParserWithEmptyColumns(GPSHarmonizationMixin, Parser):
     """
@@ -68,6 +74,13 @@ class GPSUnknownFormatParserWithEmptyColumns(GPSHarmonizationMixin, Parser):
     SKIP_INITIAL_SPACE = True
 
     MAPPINGS = MAPPINGS
+
+    def harmonize_data(self, data):
+        # Combine Date and Time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["Date"] + " " + data["Time"], errors="coerce"
+        )
+        return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)

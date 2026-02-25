@@ -24,8 +24,7 @@ class GPXParser(GPSHarmonizationMixin, Parser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "date",
-        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.TIMESTAMP: "time",
         GPSHarmonizedColumn.LATITUDE: "latitude",
         GPSHarmonizedColumn.LONGITUDE: "longitude",
         GPSHarmonizedColumn.ALTITUDE: "elevation",
@@ -44,9 +43,7 @@ class GPXParser(GPSHarmonizationMixin, Parser):
     }
 
     def harmonize_data(self, data):
-        data["datetime"] = pd.to_datetime(data["time"])
-        data["date"] = data["datetime"].dt.date
-        data["time"] = data["datetime"].dt.time
+        data["time"] = pd.to_datetime(data["time"])
         return super().harmonize_data(data)
 
     def __init__(self, stream):

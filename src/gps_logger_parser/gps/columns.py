@@ -1,14 +1,10 @@
 from enum import Enum
 
-import pyarrow as pa
-
 
 class GPSHarmonizedColumn(str, Enum):
     """Enum of harmonized GPS column names"""
 
     ID = "id"
-    DATE = "date"
-    TIME = "time"
     TIMESTAMP = "timestamp"
     LATITUDE = "latitude"
     LONGITUDE = "longitude"
@@ -27,25 +23,23 @@ class GPSHarmonizedColumn(str, Enum):
     TRIP_NR = "trip_nr"
 
 
-# PyArrow type mapping for each harmonized column
+# Pandas dtype mapping for each harmonized column
 GPS_HARMONIZED_COLUMN_TYPES = {
-    GPSHarmonizedColumn.ID: pa.string(),
-    GPSHarmonizedColumn.DATE: pa.string(),
-    GPSHarmonizedColumn.TIME: pa.string(),
-    GPSHarmonizedColumn.TIMESTAMP: pa.timestamp("us"),
-    GPSHarmonizedColumn.LATITUDE: pa.float64(),
-    GPSHarmonizedColumn.LONGITUDE: pa.float64(),
-    GPSHarmonizedColumn.ALTITUDE: pa.float64(),
-    GPSHarmonizedColumn.SPEED_KM_H: pa.float64(),
-    GPSHarmonizedColumn.TYPE: pa.string(),
-    GPSHarmonizedColumn.DISTANCE: pa.float64(),
-    GPSHarmonizedColumn.COURSE: pa.float64(),
-    GPSHarmonizedColumn.HDOP: pa.float64(),
-    GPSHarmonizedColumn.PDOP: pa.float64(),
-    GPSHarmonizedColumn.SATELLITES_COUNT: pa.int64(),
-    GPSHarmonizedColumn.TEMPERATURE: pa.float64(),
-    GPSHarmonizedColumn.SOLAR_I_MA: pa.float64(),
-    GPSHarmonizedColumn.BAT_SOC_PCT: pa.float64(),
-    GPSHarmonizedColumn.RING_NR: pa.string(),
-    GPSHarmonizedColumn.TRIP_NR: pa.int64(),
+    GPSHarmonizedColumn.ID: "object",
+    GPSHarmonizedColumn.TIMESTAMP: "datetime64[ns]",
+    GPSHarmonizedColumn.LATITUDE: "float64",
+    GPSHarmonizedColumn.LONGITUDE: "float64",
+    GPSHarmonizedColumn.ALTITUDE: "float64",
+    GPSHarmonizedColumn.SPEED_KM_H: "float64",
+    GPSHarmonizedColumn.TYPE: "object",
+    GPSHarmonizedColumn.DISTANCE: "float64",
+    GPSHarmonizedColumn.COURSE: "float64",
+    GPSHarmonizedColumn.HDOP: "float64",
+    GPSHarmonizedColumn.PDOP: "float64",
+    GPSHarmonizedColumn.SATELLITES_COUNT: "Int64",
+    GPSHarmonizedColumn.TEMPERATURE: "float64",
+    GPSHarmonizedColumn.SOLAR_I_MA: "float64",
+    GPSHarmonizedColumn.BAT_SOC_PCT: "float64",
+    GPSHarmonizedColumn.RING_NR: "object",
+    GPSHarmonizedColumn.TRIP_NR: "Int64",
 }
