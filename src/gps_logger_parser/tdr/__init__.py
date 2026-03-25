@@ -61,12 +61,13 @@ class TDRParser(Parser):
             include_columns=self.FIELDS + ["empty"],
             include_missing_columns=True,
         )
-        self.data = pacsv.read_csv(
-            self.file._file_path,
-            parse_options=parse_options,
-            read_options=read_options,
-            convert_options=convert_options,
-        ).to_pandas()
+        with self.file.get_stream(binary=True) as stream:
+            self.data = pacsv.read_csv(
+                stream,
+                parse_options=parse_options,
+                read_options=read_options,
+                convert_options=convert_options,
+            ).to_pandas()
 
         for key, value in meta:
             self.data[key] = [value] * len(self.data)
