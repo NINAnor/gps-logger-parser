@@ -22,7 +22,6 @@ IGNORED_DIRS = [
     "gps_pathtrack",
     "tdr",
     "gps_ho11",
-    "gps_axytrek",
     "gps_ecotone",
 ]
 

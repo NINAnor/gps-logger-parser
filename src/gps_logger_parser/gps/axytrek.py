@@ -79,9 +79,8 @@ class AXYTREKParser(CSVParser):
         parse_options = pacsv.ParseOptions(
             delimiter=self.SEPARATOR, invalid_row_handler=skip
         )
-        self.data = pacsv.read_csv(
-            self.file._file_path, parse_options=parse_options
-        ).to_pandas()
+        with self.file.get_stream(binary=True) as stream:
+            self.data = pacsv.read_csv(stream, parse_options=parse_options).to_pandas()
 
 
 PARSERS = [
