@@ -40,7 +40,7 @@ version = "0.1.0"
 gps-logger-parser = "gps_logger_parser.cli:app"
 
 [tool.deptry.per_rule_ignores]
-DEP002 = ["fsspec"]
+DEP002 = ["fsspec", "numpy"]
 DEP004 = ["pytest"]
 
 [tool.ruff]
