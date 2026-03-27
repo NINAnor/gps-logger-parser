@@ -57,7 +57,7 @@ class GPSParser(GPSHarmonizationMixin, CSVParser):
     def harmonize_data(self, data):
         # Combine Date and Time columns into timestamp
         data["timestamp"] = pd.to_datetime(
-            data["UTC_date"] + " " + data["UTC_time"], errors="coerce"
+            data["UTC_date"] + " " + data["UTC_time"], errors="raise"
         )
         return super().harmonize_data(data)
 

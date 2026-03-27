@@ -61,14 +61,14 @@ class GPSHarmonizationMixin:
                     if data[col_name].dtype != "object":
                         data[col_name] = data[col_name].astype(str)
                 elif pd_dtype == "float64":
-                    data[col_name] = pd.to_numeric(data[col_name], errors="coerce")
+                    data[col_name] = pd.to_numeric(data[col_name], errors="raise")
                 elif pd_dtype == "Int64":
                     # Convert to numeric first, then to nullable Int64
-                    data[col_name] = pd.to_numeric(data[col_name], errors="coerce")
+                    data[col_name] = pd.to_numeric(data[col_name], errors="raise")
                     # Round to handle floating point values before conversion
                     data[col_name] = data[col_name].round().astype("Int64")
                 elif pd_dtype == "datetime64[ns]":
-                    data[col_name] = pd.to_datetime(data[col_name], errors="coerce")
+                    data[col_name] = pd.to_datetime(data[col_name], errors="raise")
 
         # Create geometry column from latitude and longitude (WGS84)
         # Note: This creates geometry from current lat/lon values

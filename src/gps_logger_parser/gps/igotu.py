@@ -47,7 +47,7 @@ class IGotU_GT_Parser(GPSHarmonizationMixin, CSVParser):
     def harmonize_data(self, data):
         # Combine Date and Time columns into timestamp
         data["timestamp"] = pd.to_datetime(
-            data["Date"] + " " + data["Time"], errors="coerce"
+            data["Date"] + " " + data["Time"], errors="raise"
         )
         return super().harmonize_data(data)
 

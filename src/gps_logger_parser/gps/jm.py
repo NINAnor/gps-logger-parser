@@ -107,14 +107,14 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
             data["timestamp"] = pd.to_datetime(
                 self.start_date + " " + data["__original__time"],
                 format="%d.%m.%Y %H:%M:%S",
-                errors="coerce",
+                errors="raise",
             )
         else:
             # Fallback if start_date not available
             data["timestamp"] = pd.to_datetime(
                 data["__original__date"].astype(str) + " " + data["__original__time"],
                 format="%d %H:%M:%S",
-                errors="coerce",
+                errors="raise",
             )
 
         # Recreate geometry column now that lat/lon are finalized
@@ -292,7 +292,7 @@ class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
         data["timestamp"] = pd.to_datetime(
             data["__original__UTC_date"] + " " + data["__original__UTC_time"],
             format="%d.%m.%Y %H:%M:%S",
-            errors="coerce",
+            errors="raise",
         )
         return data
 
