@@ -262,8 +262,31 @@ class GPS2JMParser8Alternative(Parser):
             self.data = df
 
 
+class GPS2JMParser8Alternative2(GPS2JMParser8Alternative):
+    """
+    Alternative parser for 2Jm format v8 with additional decimal fields for latitude and longitude.
+    """  # noqa: E501
+
+    FIELDS = [
+        "UTC_date",
+        "UTC_time",
+        "Latitude",
+        "Latitude_decimal",
+        "Latitude_dir",
+        "Longitude",
+        "Longitude_decimal",
+        "Longitude_dir",
+        "satcount",
+        "hdop",
+        "speed_km_h",
+        "altitude_m",
+        "direction_deg",
+    ]
+
+
 PARSERS = [
     GPS2JMParser7_5,
     GPS2JMParser8,
+    GPS2JMParser8Alternative2,
     GPS2JMParser8Alternative,
 ]
