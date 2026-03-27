@@ -68,7 +68,7 @@ class PathtrackParser(GPSHarmonizationMixin, Parser):
             + ":"
             + data["second"].astype(str),
             format="%Y/%m/%d %H:%M:%S",
-            errors="coerce",
+            errors="raise",
         )
         return super().harmonize_data(data)
 
@@ -176,7 +176,7 @@ class CSVPathtrack(GPSHarmonizationMixin, CSVParser):
             + ":"
             + data["second"].astype(str),
             format="%Y/%m/%d %H:%M:%S",
-            errors="coerce",
+            errors="raise",
         )
         return super().harmonize_data(data)
 

@@ -58,7 +58,7 @@ class GPSUnknownFormatParser(GPSHarmonizationMixin, CSVParser):
         # Combine Date and Time columns into timestamp
         data["timestamp"] = pd.to_datetime(
             data["Date"] + " " + data["Time"],
-            errors="coerce",
+            errors="raise",
             format="%d.%m.%Y %H:%M:%S",
         )
         return super().harmonize_data(data)
@@ -81,7 +81,7 @@ class GPSUnknownFormatParserWithEmptyColumns(GPSHarmonizationMixin, Parser):
         # Combine Date and Time columns into timestamp
         data["timestamp"] = pd.to_datetime(
             data["Date"] + " " + data["Time"],
-            errors="coerce",
+            errors="raise",
             format="%d.%m.%Y %H:%M:%S",
         )
         return super().harmonize_data(data)
