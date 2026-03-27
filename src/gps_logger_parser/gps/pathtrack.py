@@ -6,9 +6,10 @@ import pandas as pd
 from ..helpers import stream_starts_with
 from ..parser_base import CSVParser, Parsable, Parser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class PathtrackParser(Parser):
+class PathtrackParser(GPSHarmonizationMixin, Parser):
     DATATYPE = "gps_pathtrack"
     DIVIDER = "*" * 85 + "\n"
     HEAD = DIVIDER + "PathTrack Archival Tracking System Results File"
@@ -34,8 +35,7 @@ class PathtrackParser(Parser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "date",
-        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "lat",
         GPSHarmonizedColumn.LONGITUDE: "lon",
         GPSHarmonizedColumn.ALTITUDE: "altitude",
@@ -53,22 +53,24 @@ class PathtrackParser(Parser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def harmonize_data(self):
-        self.data["time"] = (
-            self.data["hour"].astype(str)
-            + ":"
-            + self.data["minute"].astype(str)
-            + ":"
-            + self.data["second"].astype(str)
-        )
-        self.data["date"] = (
-            self.data["day"].astype(str)
+    def harmonize_data(self, data):
+        # Combine date and time fields into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["year"].astype(str)
             + "/"
-            + self.data["month"].astype(str)
+            + data["month"].astype(str)
+            + "/"
+            + data["day"].astype(str)
+            + " "
+            + data["hour"].astype(str)
             + ":"
-            + self.data["year"].astype(str)
+            + data["minute"].astype(str)
+            + ":"
+            + data["second"].astype(str),
+            format="%Y/%m/%d %H:%M:%S",
+            errors="coerce",
         )
-        return super().harmonize_data()
+        return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)
@@ -118,7 +120,7 @@ class PathtrackParserNoUnknown(PathtrackParser):
     )
 
 
-class CSVPathtrack(CSVParser):
+class CSVPathtrack(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_pathtrack"
     FIELDS = [
         "day",
@@ -141,8 +143,7 @@ class CSVPathtrack(CSVParser):
     SEPARATOR = ";"
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "date",
-        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "latitude",
         GPSHarmonizedColumn.LONGITUDE: "longitude",
         GPSHarmonizedColumn.ALTITUDE: "altitude",
@@ -160,22 +161,24 @@ class CSVPathtrack(CSVParser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def harmonize_data(self):
-        self.data["time"] = (
-            self.data["hour"].astype(str)
-            + ":"
-            + self.data["minute"].astype(str)
-            + ":"
-            + self.data["second"].astype(str)
-        )
-        self.data["date"] = (
-            self.data["day"].astype(str)
+    def harmonize_data(self, data):
+        # Combine date and time fields into a timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["year"].astype(str)
             + "/"
-            + self.data["month"].astype(str)
+            + data["month"].astype(str)
+            + "/"
+            + data["day"].astype(str)
+            + " "
+            + data["hour"].astype(str)
             + ":"
-            + self.data["year"].astype(str)
+            + data["minute"].astype(str)
+            + ":"
+            + data["second"].astype(str),
+            format="%Y/%m/%d %H:%M:%S",
+            errors="coerce",
         )
-        return super().harmonize_data()
+        return super().harmonize_data(data)
 
 
 PARSERS = [

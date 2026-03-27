@@ -4,6 +4,7 @@ import pandas as pd
 
 from ..parser_base import CSVParser, Parsable, Parser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 FIELDS = [
     "DataID",
@@ -22,8 +23,7 @@ FIELDS = [
 
 MAPPINGS = {
     GPSHarmonizedColumn.ID: "DataID",
-    GPSHarmonizedColumn.DATE: "Date",
-    GPSHarmonizedColumn.TIME: "Time",
+    GPSHarmonizedColumn.TIMESTAMP: None,
     GPSHarmonizedColumn.LATITUDE: "Latitude",
     GPSHarmonizedColumn.LONGITUDE: "Longitude",
     GPSHarmonizedColumn.ALTITUDE: "Altitude",
@@ -42,7 +42,7 @@ MAPPINGS = {
 }
 
 
-class GPSUnknownFormatParser(CSVParser):
+class GPSUnknownFormatParser(GPSHarmonizationMixin, CSVParser):
     """
     Parser for a format, its a GPS CSV like format
     with the following fields
@@ -54,8 +54,17 @@ class GPSUnknownFormatParser(CSVParser):
 
     MAPPINGS = MAPPINGS
 
+    def harmonize_data(self, data):
+        # Combine Date and Time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["Date"] + " " + data["Time"],
+            errors="coerce",
+            format="%d.%m.%Y %H:%M:%S",
+        )
+        return super().harmonize_data(data)
 
-class GPSUnknownFormatParserWithEmptyColumns(Parser):
+
+class GPSUnknownFormatParserWithEmptyColumns(GPSHarmonizationMixin, Parser):
     """
     Parser for a format, its a GPS CSV like format
     with the following fields
@@ -67,6 +76,15 @@ class GPSUnknownFormatParserWithEmptyColumns(Parser):
     SKIP_INITIAL_SPACE = True
 
     MAPPINGS = MAPPINGS
+
+    def harmonize_data(self, data):
+        # Combine Date and Time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["Date"] + " " + data["Time"],
+            errors="coerce",
+            format="%d.%m.%Y %H:%M:%S",
+        )
+        return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)

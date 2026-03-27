@@ -6,9 +6,10 @@ import pandas as pd
 from ..helpers import stream_chunk_contains, stream_starts_with
 from ..parser_base import CSVParser, Parsable
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class GPSCatTrackParser(CSVParser):
+class GPSCatTrackParser(GPSHarmonizationMixin, CSVParser):
     """
     Parser for a format, its a GPS CSV like format
     with the following fields
@@ -35,8 +36,7 @@ class GPSCatTrackParser(CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "",
-        GPSHarmonizedColumn.DATE: "Date",
-        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude",
@@ -53,6 +53,13 @@ class GPSCatTrackParser(CSVParser):
         GPSHarmonizedColumn.RING_NR: None,
         GPSHarmonizedColumn.TRIP_NR: None,
     }
+
+    def harmonize_data(self, data):
+        # Combine Date and Time columns into timestamp
+        data["timestamp"] = pd.to_datetime(
+            data["Date"] + " " + data["Time"], errors="coerce"
+        )
+        return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):
         self.file = parsable
@@ -114,8 +121,7 @@ class GPSCatTrack2(GPSCatTrackParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "",
-        GPSHarmonizedColumn.DATE: "Date",
-        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude",
@@ -155,8 +161,7 @@ class GPSCatTrack3(GPSCatTrackParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "",
-        GPSHarmonizedColumn.DATE: "Date",
-        GPSHarmonizedColumn.TIME: "Time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude",

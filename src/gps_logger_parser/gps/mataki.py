@@ -1,8 +1,9 @@
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class MatakiParser(CSVParser):
+class MatakiParser(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_mataki"
     FIELDS = [
         "node",
@@ -20,8 +21,7 @@ class MatakiParser(CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: None,
-        GPSHarmonizedColumn.DATE: "datetime",
-        GPSHarmonizedColumn.TIME: None,
+        GPSHarmonizedColumn.TIMESTAMP: "datetime",
         GPSHarmonizedColumn.LATITUDE: "lat",
         GPSHarmonizedColumn.LONGITUDE: "lon",
         GPSHarmonizedColumn.ALTITUDE: "alt",

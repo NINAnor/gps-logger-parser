@@ -1,8 +1,9 @@
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class InterrexParser(CSVParser):
+class InterrexParser(GPSHarmonizationMixin, CSVParser):
     """
     Parser for Interrex Logger
     """
@@ -30,8 +31,7 @@ class InterrexParser(CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "UUID",
-        GPSHarmonizedColumn.DATE: "Collecting time",
-        GPSHarmonizedColumn.TIME: None,
+        GPSHarmonizedColumn.TIMESTAMP: "Collecting time",
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude",

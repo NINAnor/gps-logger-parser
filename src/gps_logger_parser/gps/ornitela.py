@@ -1,8 +1,9 @@
 from ..parser_base import CSVParser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
-class OrnitelaParser(CSVParser):
+class OrnitelaParser(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_ornitela"
     FIELDS = [
         "device_id",
@@ -39,8 +40,7 @@ class OrnitelaParser(CSVParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "device_id",
-        GPSHarmonizedColumn.DATE: "UTC_date",
-        GPSHarmonizedColumn.TIME: "UTC_time",
+        GPSHarmonizedColumn.TIMESTAMP: "UTC_timestamp",
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "MSL_altitude_m",
@@ -88,8 +88,7 @@ class OrnitelaAlternativeParser(OrnitelaParser):
 
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "device_id",
-        GPSHarmonizedColumn.DATE: "UTC_date",
-        GPSHarmonizedColumn.TIME: "UTC_time",
+        GPSHarmonizedColumn.TIMESTAMP: "UTC_datetime",
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "Altitude_m",

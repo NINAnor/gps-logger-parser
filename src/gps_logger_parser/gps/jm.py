@@ -7,6 +7,7 @@ import pandas as pd
 from ..helpers import stream_chunk_contains
 from ..parser_base import Parsable, Parser
 from .columns import GPSHarmonizedColumn
+from .mixin import GPSHarmonizationMixin
 
 
 def signed(val, direction):
@@ -19,7 +20,7 @@ def signed(val, direction):
 # Earth&Ocean mGPS-2
 
 
-class GPS2JMParser7_5(Parser):
+class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
     """
     Parser for 2Jm format v 7.5
     """
@@ -34,28 +35,92 @@ class GPS2JMParser7_5(Parser):
         "---- End of data ----",
     ]
 
-    # TODO: understand the fields first
-    # MAPPINGS = {
-    #     "id": "",
-    #     "date": None,
-    #     "time": None,
-    #     "latitude": None,
-    #     "longitude": None,
-    #     "altitude": None,
-    #     "speed_km_h": None,
-    #     "type": None,
-    #     "distance": None,
-    #     "course": None,
-    #     "hdop": None,
-    #     "pdop": None,
-    #     "satellites_count": None,
-    #     "direction_deg": None,
-    #     "temperature": None,
-    #     "solar_I_mA": None,
-    #     "bat_soc_pct": None,
-    #     "ring_nr": None,
-    #     "trip_nr": None,
-    # }
+    FIELDS = [
+        "date",
+        "time",
+        "latitude",
+        "latitude_decimal",
+        "n",
+        "longitude",
+        "longitude_decimal",
+        "e",
+        "satellite",
+        "voltage",
+        "speed",
+        "altitude",
+        "distance",
+    ]
+    MAPPINGS = {
+        GPSHarmonizedColumn.ID: "",
+        GPSHarmonizedColumn.TIMESTAMP: None,
+        GPSHarmonizedColumn.LATITUDE: None,
+        GPSHarmonizedColumn.LONGITUDE: None,
+        GPSHarmonizedColumn.ALTITUDE: None,
+        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.TYPE: None,
+        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.COURSE: None,
+        GPSHarmonizedColumn.HDOP: None,
+        GPSHarmonizedColumn.PDOP: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: None,
+        GPSHarmonizedColumn.TEMPERATURE: None,
+        GPSHarmonizedColumn.SOLAR_I_MA: None,
+        GPSHarmonizedColumn.BAT_SOC_PCT: None,
+        GPSHarmonizedColumn.RING_NR: None,
+        GPSHarmonizedColumn.TRIP_NR: None,
+    }
+
+    def harmonize_data(self, data):
+        # Combine start date with time from each row
+        # start_date is in format DD.MM.YYYY, time is HH:MM:SS
+        # Call parent harmonization first
+        data = super().harmonize_data(data)
+
+        # Convert coordinates from degrees + decimal minutes to decimal degrees
+        # Latitude: degrees + (minutes / 60), with direction sign
+        lat_decimal_degrees = (
+            data["__original__latitude"].astype(int)
+            + data["__original__latitude_decimal"].astype(float) / 60
+        )
+        data["latitude"] = [
+            signed(lat, direction)
+            for lat, direction in zip(
+                lat_decimal_degrees, data["__original__n"], strict=False
+            )
+        ]
+
+        # Longitude: degrees + (minutes / 60), with direction sign
+        lon_decimal_degrees = (
+            data["__original__longitude"].astype(int)
+            + data["__original__longitude_decimal"].astype(float) / 60
+        )
+        data["longitude"] = [
+            signed(lon, direction)
+            for lon, direction in zip(
+                lon_decimal_degrees, data["__original__e"], strict=False
+            )
+        ]
+
+        # Then create the timestamp column after original columns are prefixed
+        if hasattr(self, "start_date") and self.start_date:
+            # time column is now __original__time
+            data["timestamp"] = pd.to_datetime(
+                self.start_date + " " + data["__original__time"],
+                format="%d.%m.%Y %H:%M:%S",
+                errors="coerce",
+            )
+        else:
+            # Fallback if start_date not available
+            data["timestamp"] = pd.to_datetime(
+                data["__original__date"].astype(str) + " " + data["__original__time"],
+                format="%d %H:%M:%S",
+                errors="coerce",
+            )
+
+        # Recreate geometry column now that lat/lon are finalized
+        data = self._create_geometry_column(data)
+
+        return data
 
     def _fix_content(self, data):
         return data
@@ -71,11 +136,27 @@ class GPS2JMParser7_5(Parser):
             if not stream_chunk_contains(stream, 30, "2JmGPS-LOG"):
                 self._raise_not_supported("Stream must start with 2JmGPS-LOG")
 
-            groups = stream.read().split("\n\n")
+            full_content = stream.read()
+            groups = full_content.split("\n\n")
             head = groups.pop(0)
 
             if self.VERSION not in head:
                 self._raise_not_supported("Version not supported")
+
+            # Extract STARTTIME date from any of the header groups
+            self.start_date = None
+            for group in groups:
+                for line in group.split("\n"):
+                    if "STARTTIME" in line:
+                        # Format: STARTTIME .......: 29.06.2013 20:00:00
+                        parts = line.split(":")
+                        if len(parts) >= 2:
+                            datetime_str = parts[1].strip()
+                            # Extract just the date part (DD.MM.YYYY)
+                            self.start_date = datetime_str.split()[0]
+                        break
+                if self.start_date:
+                    break
 
             data = None
             for group in groups:
@@ -128,8 +209,7 @@ class GPS2JMParser8(GPS2JMParser7_5):
     ]
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "",
-        GPSHarmonizedColumn.DATE: "date",
-        GPSHarmonizedColumn.TIME: "time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: None,
         GPSHarmonizedColumn.LONGITUDE: None,
         GPSHarmonizedColumn.ALTITUDE: "altitude",
@@ -156,7 +236,7 @@ class GPS2JMParser8(GPS2JMParser7_5):
         return regex.sub(" ", data)
 
 
-class GPS2JMParser8Alternative(Parser):
+class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
     """
     Parser for 2Jm format v8
 
@@ -185,8 +265,7 @@ class GPS2JMParser8Alternative(Parser):
     # TODO: understand the fields first
     MAPPINGS = {
         GPSHarmonizedColumn.ID: "",
-        GPSHarmonizedColumn.DATE: "UTC_date",
-        GPSHarmonizedColumn.TIME: "UTC_time",
+        GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: "Latitude",
         GPSHarmonizedColumn.LONGITUDE: "Longitude",
         GPSHarmonizedColumn.ALTITUDE: "altitude_m",
@@ -203,6 +282,19 @@ class GPS2JMParser8Alternative(Parser):
         GPSHarmonizedColumn.RING_NR: None,
         GPSHarmonizedColumn.TRIP_NR: None,
     }
+
+    def harmonize_data(self, data):
+        # Combine UTC_date and UTC_time columns into timestamp
+        # Call parent harmonization first
+        data = super().harmonize_data(data)
+
+        # Then create timestamp from the prefixed original columns
+        data["timestamp"] = pd.to_datetime(
+            data["__original__UTC_date"] + " " + data["__original__UTC_time"],
+            format="%d.%m.%Y %H:%M:%S",
+            errors="coerce",
+        )
+        return data
 
     def _fix_content(self, data: str):
         """
