@@ -1,6 +1,9 @@
+import logging
+
 import typer
 from upath import UPath
 
+from .logger import configure_logger
 from .parser import detect_file
 
 app = typer.Typer(
@@ -25,12 +28,15 @@ def parse(
 ):
     params = {}
 
+    logging_level = logging.DEBUG if verbose else logging.INFO
+    logger = configure_logger(logging_level=logging_level)
+
     if file.startswith("s3://"):
         if s3_endpoint:
             params["endpoint_url"] = s3_endpoint
         params["anon"] = True
 
-    parser_instance = detect_file(UPath(file, **params))
+    parser_instance = detect_file(UPath(file, **params), logger=logger)
     parser_instance.write_parquet(UPath(output))
 
 

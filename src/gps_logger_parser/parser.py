@@ -16,7 +16,7 @@ available_parsers = (
 logger = logging.getLogger(__name__)
 
 
-def detect_file(path: UPath):
+def detect_file(path: UPath, *args, logger=logger, **kwargs):
     parsable = Parsable(file_path=path)
 
     for parser in available_parsers:
