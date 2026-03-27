@@ -4,6 +4,7 @@ import pathlib
 import pyarrow as pa
 import pyarrow.compute as pc
 import pytest
+from upath import UPath
 
 from ..gps.columns import GPS_HARMONIZED_COLUMN_TYPES, GPSHarmonizedColumn
 from ..parser import detect_file
@@ -50,6 +51,17 @@ testdata_fail = [
     (f.name, f) for f in (TESTS_DATA_PATH / "fail").iterdir() if not f.is_dir()
 ]
 
+testdata_s3 = []
+
+S3_TEST_PATHS = TESTS_DATA_PATH / "s3.csv"
+if S3_TEST_PATHS.exists():
+    with S3_TEST_PATHS.open("r") as f:
+        import csv
+
+        reader = csv.DictReader(f, delimiter=";")
+        for row in reader:
+            testdata_s3.append((row["path"], row["endpoint_url"]))
+
 
 @pytest.mark.parametrize("file,path,file_format", testdata_success)
 def test_parser_success(file, path, file_format):
@@ -63,6 +75,13 @@ def test_parser_success(file, path, file_format):
             table.column("_parser"), pa.array([parser_instance.__class__.__name__])
         )
     ).as_py()
+
+
+@pytest.mark.parametrize("path,endpoint_url", testdata_s3)
+def test_parser_remote(path, endpoint_url):
+    parser_instance = detect_file(UPath(path, anon=True, endpoint_url=endpoint_url))
+    table = parser_instance.as_table()
+    assert table
 
 
 @pytest.mark.parametrize("file,path", testdata_fail)
