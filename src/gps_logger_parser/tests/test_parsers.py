@@ -23,6 +23,12 @@ IGNORED_DIRS = [
     "tdr",
     "gps_ho11",
     "gps_ecotone",
+    "other",
+    "other_sensor",
+    "gps_axytrek",
+    "gps_interrex",
+    "gps_ornitela",
+    "gps_mataki",
 ]
 
 # Define expected metadata columns that should be present in all harmonized outputs
