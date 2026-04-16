@@ -52,6 +52,21 @@ class GPSUHo11(GPSHarmonizationMixin, CSVParser):
             errors="raise",
             format="%d.%m.%Y %H:%M:%S",
         )
+
+        for column in [
+            "Latitude",
+            "Longitude",
+            "Altitude",
+            "Speed",
+            "Course",
+            "Distance",
+        ]:
+            try:
+                data[column] = data[column].str.replace(",", ".", regex=False)
+                data[column] = pd.to_numeric(data[column], errors="coerce")
+            except AttributeError:
+                pass
+
         return super().harmonize_data(data)
 
 

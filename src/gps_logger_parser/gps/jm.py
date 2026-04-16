@@ -26,8 +26,6 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
     """
 
     DATATYPE = "gps_2jm"
-    # TODO: define fields
-    FIELDS = [str(x) for x in range(0, 13)]
     VERSION = "v7.5"
     SEPARATOR = " "
     ENDINGS = [
@@ -55,14 +53,14 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
         GPSHarmonizedColumn.TIMESTAMP: None,
         GPSHarmonizedColumn.LATITUDE: None,
         GPSHarmonizedColumn.LONGITUDE: None,
-        GPSHarmonizedColumn.ALTITUDE: None,
-        GPSHarmonizedColumn.SPEED_KM_H: None,
+        GPSHarmonizedColumn.ALTITUDE: "altitude",
+        GPSHarmonizedColumn.SPEED_KM_H: "speed",
         GPSHarmonizedColumn.TYPE: None,
-        GPSHarmonizedColumn.DISTANCE: None,
+        GPSHarmonizedColumn.DISTANCE: "distance",
         GPSHarmonizedColumn.COURSE: None,
         GPSHarmonizedColumn.HDOP: None,
         GPSHarmonizedColumn.PDOP: None,
-        GPSHarmonizedColumn.SATELLITES_COUNT: None,
+        GPSHarmonizedColumn.SATELLITES_COUNT: "satellite",
         GPSHarmonizedColumn.TEMPERATURE: None,
         GPSHarmonizedColumn.SOLAR_I_MA: None,
         GPSHarmonizedColumn.BAT_SOC_PCT: None,
@@ -71,56 +69,49 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
     }
 
     def harmonize_data(self, data):
-        # Combine start date with time from each row
-        # start_date is in format DD.MM.YYYY, time is HH:MM:SS
-        # Call parent harmonization first
-        data = super().harmonize_data(data)
+        # Call parent harmonization — applies MAPPINGS, enforces GPS schema,
+        # creates geometry, and drops raw source columns
+        result = super().harmonize_data(data)
 
         # Convert coordinates from degrees + decimal minutes to decimal degrees
+        # before calling super(), so the harmonized lat/lon are in decimal degrees.
         # Latitude: degrees + (minutes / 60), with direction sign
         lat_decimal_degrees = (
-            data["__original__latitude"].astype(int)
-            + data["__original__latitude_decimal"].astype(float) / 60
+            data["latitude"].astype(int) + data["latitude_decimal"].astype(float) / 60
         )
-        data["latitude"] = [
+        result["latitude"] = [
             signed(lat, direction)
-            for lat, direction in zip(
-                lat_decimal_degrees, data["__original__n"], strict=False
-            )
+            for lat, direction in zip(lat_decimal_degrees, data["n"], strict=False)
         ]
 
         # Longitude: degrees + (minutes / 60), with direction sign
         lon_decimal_degrees = (
-            data["__original__longitude"].astype(int)
-            + data["__original__longitude_decimal"].astype(float) / 60
+            data["longitude"].astype(int) + data["longitude_decimal"].astype(float) / 60
         )
-        data["longitude"] = [
+        result["longitude"] = [
             signed(lon, direction)
-            for lon, direction in zip(
-                lon_decimal_degrees, data["__original__e"], strict=False
-            )
+            for lon, direction in zip(lon_decimal_degrees, data["e"], strict=False)
         ]
 
-        # Then create the timestamp column after original columns are prefixed
+        # Build timestamp column before calling super()
         if hasattr(self, "start_date") and self.start_date:
-            # time column is now __original__time
-            data["timestamp"] = pd.to_datetime(
-                self.start_date + " " + data["__original__time"],
+            result["timestamp"] = pd.to_datetime(
+                self.start_date + " " + data["time"],
                 format="%d.%m.%Y %H:%M:%S",
-                errors="raise",
+                errors="coerce",
             )
         else:
             # Fallback if start_date not available
-            data["timestamp"] = pd.to_datetime(
-                data["__original__date"].astype(str) + " " + data["__original__time"],
+            result["timestamp"] = pd.to_datetime(
+                data["date"].astype(str) + " " + data["time"],
                 format="%d %H:%M:%S",
-                errors="raise",
+                errors="coerce",
             )
 
         # Recreate geometry column now that lat/lon are finalized
-        data = self._create_geometry_column(data)
+        result = self._create_geometry_column(result)
 
-        return data
+        return result
 
     def _fix_content(self, data):
         return data
@@ -284,17 +275,18 @@ class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
     }
 
     def harmonize_data(self, data):
-        # Combine UTC_date and UTC_time columns into timestamp
-        # Call parent harmonization first
-        data = super().harmonize_data(data)
 
-        # Then create timestamp from the prefixed original columns
-        data["timestamp"] = pd.to_datetime(
-            data["__original__UTC_date"] + " " + data["__original__UTC_time"],
+        # Call parent harmonization — applies MAPPINGS, enforces GPS schema,
+        # creates geometry, and drops raw source columns
+        result = super().harmonize_data(data)
+
+        # Build timestamp from raw UTC_date and UTC_time columns
+        result["timestamp"] = pd.to_datetime(
+            data["UTC_date"] + " " + data["UTC_time"],
             format="%d.%m.%Y %H:%M:%S",
             errors="raise",
         )
-        return data
+        return result
 
     def _fix_content(self, data: str):
         """

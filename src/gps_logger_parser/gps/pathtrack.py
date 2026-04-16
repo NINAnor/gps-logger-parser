@@ -56,7 +56,8 @@ class PathtrackParser(GPSHarmonizationMixin, Parser):
     def harmonize_data(self, data):
         # Combine date and time fields into timestamp
         data["timestamp"] = pd.to_datetime(
-            data["year"].astype(str)
+            "20"
+            + data["year"].astype(str)
             + "/"
             + data["month"].astype(str)
             + "/"
@@ -164,7 +165,8 @@ class CSVPathtrack(GPSHarmonizationMixin, CSVParser):
     def harmonize_data(self, data):
         # Combine date and time fields into a timestamp
         data["timestamp"] = pd.to_datetime(
-            data["year"].astype(str)
+            "20"  # There are just the last 2 digits of the year
+            + data["year"].astype(str)
             + "/"
             + data["month"].astype(str)
             + "/"
@@ -178,6 +180,19 @@ class CSVPathtrack(GPSHarmonizationMixin, CSVParser):
             format="%Y/%m/%d %H:%M:%S",
             errors="raise",
         )
+
+        for column in [
+            "latitude",
+            "longitude",
+            "altitude",
+        ]:
+            try:
+                data[column] = data[column].str.replace(",", ".", regex=False)
+                data[column] = pd.to_numeric(data[column], errors="coerce")
+            except AttributeError:
+                # this fails only when the column is already numeric
+                pass
+
         return super().harmonize_data(data)
 
 

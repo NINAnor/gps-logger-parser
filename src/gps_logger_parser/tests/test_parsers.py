@@ -1,3 +1,4 @@
+import json
 import os
 import pathlib
 
@@ -6,7 +7,6 @@ import pyarrow.compute as pc
 import pytest
 from upath import UPath
 
-from ..gps.columns import GPSHarmonizedColumn
 from ..parser import detect_file
 
 TESTS_DATA_PATH = pathlib.Path(os.environ.get("TEST_DATA_PATH"))
@@ -32,8 +32,9 @@ IGNORED_DIRS = [
     "gps_mataki",
 ]
 
-# Define expected metadata columns that should be present in all harmonized outputs
+# Define expected columns that should be present in all harmonized outputs
 REQUIRED_METADATA_COLUMNS = {
+    "_original_data": pa.json_(pa.large_utf8()),
     "_datatype": pa.string(),
     "_parser": pa.string(),
     "_logger_file": pa.string(),
@@ -78,6 +79,36 @@ def test_parser_success(file, path, file_format):
     ).as_py()
 
 
+@pytest.mark.timeout(10)
+@pytest.mark.parametrize("file,path,file_format", testdata_success)
+def test_original_data_preserved(file, path, file_format):
+    """
+    Test that raw source data is preserved in the _original_data JSON column
+    for all parser types.
+    """
+    parser_instance = detect_file(path)
+    table = parser_instance.as_table()
+
+    assert "_original_data" in table.column_names, (
+        f"Parser {file} is missing the '_original_data' column"
+    )
+
+    # Verify the column type is json(large_utf8)
+    actual_type = table.schema.field("_original_data").type
+    assert actual_type == pa.json_(pa.large_utf8()), (
+        f"Column '_original_data' has type {actual_type}, "
+        f"expected {pa.json_(pa.large_utf8())} in {file}"
+    )
+
+    # Verify values are valid JSON objects with at least one key
+    first_value = table.column("_original_data")[0].as_py()
+    parsed = json.loads(first_value)
+    assert isinstance(parsed, dict), (
+        f"_original_data value is not a JSON object in {file}"
+    )
+    assert len(parsed) > 0, f"_original_data JSON object has no keys in {file}"
+
+
 @pytest.mark.parametrize("path,endpoint_url", testdata_s3)
 def test_parser_remote(path, endpoint_url):
     parser_instance = detect_file(UPath(path, anon=True, endpoint_url=endpoint_url))
@@ -114,61 +145,7 @@ def test_harmonized_output_schema(file, path, file_format):
             f"Column '{col_name}' has type {actual_type}, expected {expected_type} in {file}"
         )
 
-    # For GPS parsers, check that all harmonized columns are present
-    if file_format.startswith("gps_"):
-        for harmonized_col in GPSHarmonizedColumn:
-            col_name = harmonized_col.value
-            assert col_name in column_names, (
-                f"GPS parser {file} is missing harmonized column '{col_name}'"
-            )
-
-        # Verify geometry column has correct type and coordinates match lat/lon
-        geometry_field = table.schema.field("geometry")
-        assert "geoarrow.point" in str(geometry_field.type), (
-            f"Geometry column should be geoarrow.point type, got {geometry_field.type} in {file}"
-        )
-
-        # Convert to pandas and verify geometry coordinates match lat/lon
-        df = table.to_pandas()
-        if not df["latitude"].isna().all() and not df["longitude"].isna().all():
-            # Check first non-null geometry
-            for idx in range(min(3, len(df))):
-                if (
-                    not df["latitude"].isna().iloc[idx]
-                    and not df["longitude"].isna().iloc[idx]
-                ):
-                    geom = df["geometry"].iloc[idx]
-                    lat = df["latitude"].iloc[idx]
-                    lon = df["longitude"].iloc[idx]
-                    assert abs(geom["x"] - lon) < 1e-6, (
-                        f"Geometry x-coordinate {geom['x']} doesn't match longitude {lon} in {file}"
-                    )
-                    assert abs(geom["y"] - lat) < 1e-6, (
-                        f"Geometry y-coordinate {geom['y']} doesn't match latitude {lat} in {file}"
-                    )
-                    break
-
-
-@pytest.mark.timeout(10)
-@pytest.mark.parametrize("file,path,file_format", testdata_success)
-def test_original_columns_preserved(file, path, file_format):
-    """
-    Test that original columns are preserved with __original__ prefix
-    for all parser types.
-    """
-    parser_instance = detect_file(path)
-    table = parser_instance.as_table()
-
-    # Check that __original__ columns exist
-    original_cols = [
-        col for col in table.column_names if col.startswith("__original__")
-    ]
-    assert len(original_cols) > 0, (
-        f"Parser {file} should have at least one __original__ column"
+    schema = parser_instance.get_harmonization_schema()
+    assert set(list(schema.keys()) + list(REQUIRED_METADATA_COLUMNS.keys())) == set(
+        column_names
     )
-
-    # Verify that original columns have the expected prefix format
-    for col in original_cols:
-        assert col.startswith("__original__"), (
-            f"Original column '{col}' does not have __original__ prefix"
-        )

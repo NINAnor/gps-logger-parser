@@ -18,7 +18,7 @@ class GPSHarmonizedColumn(str, Enum):
     PDOP = "pdop"
     SATELLITES_COUNT = "satellites_count"
     TEMPERATURE = "temperature"
-    SOLAR_I_MA = "solar_I_mA"
+    SOLAR_I_MA = "solar_i_ma"
     BAT_SOC_PCT = "bat_soc_pct"
     RING_NR = "ring_nr"
     TRIP_NR = "trip_nr"
@@ -30,7 +30,6 @@ GPS_HARMONIZED_COLUMN_TYPES = {
     GPSHarmonizedColumn.TIMESTAMP: "datetime64[ns]",
     GPSHarmonizedColumn.LATITUDE: "float64",
     GPSHarmonizedColumn.LONGITUDE: "float64",
-    GPSHarmonizedColumn.GEOMETRY: "geoarrow.point",
     GPSHarmonizedColumn.ALTITUDE: "float64",
     GPSHarmonizedColumn.SPEED_KM_H: "float64",
     GPSHarmonizedColumn.TYPE: "object",
@@ -44,4 +43,5 @@ GPS_HARMONIZED_COLUMN_TYPES = {
     GPSHarmonizedColumn.BAT_SOC_PCT: "float64",
     GPSHarmonizedColumn.RING_NR: "object",
     GPSHarmonizedColumn.TRIP_NR: "Int64",
+    GPSHarmonizedColumn.GEOMETRY: "object",
 }
