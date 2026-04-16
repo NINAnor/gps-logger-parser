@@ -1,13 +1,15 @@
 import csv
+import json
 import os
 import pathlib
 from contextlib import contextmanager
 
+import geoarrow.pandas as _  # noqa: F401
 import pandas as pd
 import pyarrow as pa
 import pyarrow.csv as pacsv
 import pyarrow.parquet as pq
-from chardet.universaldetector import UniversalDetector
+from chardet import UniversalDetector
 from upath import UPath
 
 MAX_SPEED = float(os.environ.get("MAX_SPEED", default="10"))
@@ -51,109 +53,78 @@ class Parsable:
 
 class Parser:
     DATATYPE = "generic_parser"
-    OUTLIERS = {"speed_km_h": lambda x: x > MAX_SPEED}
 
     def __init__(self, parsable: Parsable):
         self.file = parsable
         self.data = []
+        self.harmonized_data = None
 
     def _raise_not_supported(self, text):
         raise ParserNotSupported(f"{self.__class__.__name__}: {text}")
 
     def get_mappings(self):
-        return {v: k for k, v in getattr(self, "MAPPINGS", {}).items() if v}
+        mappings = {v: k for k, v in getattr(self, "MAPPINGS", {}).items()}
 
-    def get_outliers(self):
-        return getattr(self, "OUTLIERS", {})
+        if not mappings:
+            raise NotImplementedError("Subclasses must provide a mapping")
+        return mappings
 
     def harmonize_data(self, data):
         """
-        Preserve original columns and remap values parsed using MAPPINGS.
+        Remap values parsed using MAPPINGS into harmonized column names.
 
-        Original columns are kept with '__original__' prefix.
-        Harmonized columns are created based on MAPPINGS.
+        For each entry in MAPPINGS that has a source column, the source column
+        value is copied into the harmonized column name.
 
         Args:
-            data: DataFrame to harmonize
+            data: DataFrame to harmonize (a copy of self.data)
 
         Returns:
-            Harmonized DataFrame with original columns prefixed
+            Harmonized DataFrame with harmonized columns added
         """
-        # First, preserve original columns by renaming them with __original__ prefix
-        original_columns = {col: f"__original__{col}" for col in data.columns}
-        data = data.rename(columns=original_columns)
-
-        # Then create harmonized columns by copying and renaming from originals
         mappings = self.get_mappings()
+
+        schema = self.get_harmonization_schema()
+        df = pd.DataFrame(columns=schema.keys()).astype(schema)
+
         if mappings:
             # mappings is {source_col: harmonized_col}
-            # We need to copy from __original__{source_col} to harmonized_col
             for source_col, harmonized_col in mappings.items():
-                original_col_name = f"__original__{source_col}"
-                if original_col_name in data.columns:
-                    data[harmonized_col] = data[original_col_name]
+                print(f"Mapping {source_col} to {harmonized_col}")
+                if source_col in data.columns:
+                    df[harmonized_col.value] = data[source_col]
+                else:
+                    df[harmonized_col.value] = None
 
-        return data
+        return df
 
-    def get_harmonization_schema(self):
+    def get_harmonization_schema(self) -> dict:
         """
-        Return PyArrow schema for harmonized columns, or None for generic parsers.
+        Return Pandas schema for harmonized columns
 
         Override this method in subclasses to provide explicit schema for
         harmonized output.
         """
-        return None
-
-    def detect_outliers(self):
-        """
-        Apply conditions on fields to check for outliers
-        """
-        outliers = self.get_outliers()
-        if outliers:
-
-            def check_conditions(row):
-                return any(
-                    condition(row[k])
-                    for k, condition in outliers.items()
-                    if k in self.data
-                )
-
-            self.data["outlier"] = self.data.apply(check_conditions, axis=1)
+        raise NotImplementedError(
+            "Subclasses must implement get_harmonization_schema()"
+        )
 
     def as_table(self) -> pa.Table:
-        self.data = self.harmonize_data(self.data)
-        # self.detect_outliers()
+        # Capture raw source data as JSON before any harmonization
+        original_records = self.data.to_dict(orient="records")
+        original_json = [json.dumps(row, default=str) for row in original_records]
 
-        # Use explicit schema if provided by subclass harmonization
-        # Note: schema only applies to harmonized columns, not __original__ ones
-        schema = self.get_harmonization_schema()
-        if schema:
-            # Separate harmonized and original columns
-            harmonized_cols = [
-                col for col in self.data.columns if not col.startswith("__original__")
-            ]
-            original_cols = [
-                col for col in self.data.columns if col.startswith("__original__")
-            ]
+        self.harmonized_data = self.harmonize_data(self.data.copy())
 
-            # Create table with explicit schema for harmonized columns
-            harmonized_df = self.data[harmonized_cols]
-            table = pa.Table.from_pandas(
-                harmonized_df, schema=schema, preserve_index=False
-            )
+        if len(self.harmonized_data) == 0:
+            raise ValueError("Harmonized data is empty, cannot create table")
 
-            # Add original columns without schema (let PyArrow infer types)
-            if original_cols:
-                original_df = self.data[original_cols]
-                original_table = pa.Table.from_pandas(original_df, preserve_index=False)
-                # Append original columns to the table
-                for col_name in original_table.column_names:
-                    table = table.append_column(
-                        col_name, original_table.column(col_name)
-                    )
-        else:
-            table = pa.Table.from_pandas(self.data, preserve_index=False)
+        table = pa.Table.from_pandas(self.harmonized_data, preserve_index=False)
 
+        table = table.append_column(
+            "_original_data",
+            pa.array(original_json, type=pa.json_(pa.large_utf8())),
+        )
         table = table.append_column(
             "_datatype", pa.array([self.DATATYPE] * len(table), pa.string())
         )

@@ -1,5 +1,6 @@
 import csv
 
+import numpy as np
 import pandas as pd
 
 from ..parser_base import CSVParser, Parsable, Parser
@@ -84,6 +85,8 @@ class GPSUnknownFormatParserWithEmptyColumns(GPSHarmonizationMixin, Parser):
             errors="raise",
             format="%d.%m.%Y %H:%M:%S",
         )
+        # this file seem to have been manipulated in excel, using some formulas
+        data = data.replace("#VALUE!", np.nan)
         return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):

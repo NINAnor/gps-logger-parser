@@ -40,7 +40,7 @@ class GPSUnknownFormatExcelParser(ExcelParser):
         "pdop": None,
         "satellites_count": None,
         "temperature": None,
-        "solar_I_mA": None,
+        "solar_i_ma": None,
         "bat_soc_pct": None,
         "ring_nr": None,
         "trip_nr": "Tripnr",
