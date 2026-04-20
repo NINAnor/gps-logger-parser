@@ -114,7 +114,12 @@ class GPSUnknownFormatParserWithEmptyColumns(GPSHarmonizationMixin, Parser):
 
             stream.seek(0)
             self.data = pd.read_csv(
-                stream, header=1, names=self.FIELDS, sep=self.SEPARATOR, index_col=False
+                stream,
+                header=1,
+                names=self.FIELDS,
+                sep=self.SEPARATOR,
+                index_col=False,
+                usecols=list(range(len(self.FIELDS))),
             )
 
 
