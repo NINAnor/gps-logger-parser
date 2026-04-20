@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<gpx creator="Mobile Action http://www.mobileaction.com/1.1" version="1.0" xmlns="http://www.topografix.com/GPX/1/0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+<trk>
+<name>20170622-215451(1)</name>
+<desc>Color:004000ff</desc>
+<trkseg>
+<trkpt lat="22.699339" lon="113.817207">
+<ele>78.379997</ele>
+<time>2017-03-03T03:02:56Z</time>
+<speed>0.33</speed>
+</trkpt>
+<trkpt lat="22.699511" lon="113.817123">
+<ele>73.479996</ele>
+<time>2017-03-03T03:03:01Z</time>
+<speed>0.11</speed>
+</trkpt>
+<trkpt lat="22.699604" lon="113.817070">
+<ele>79.549995</ele>
+<time>2017-03-03T03:03:07Z</time>
+<speed>0.51</speed>
+</trkpt>
+<trkpt lat="22.699646" lon="113.817032">
+<ele>82.970001</ele>
+<time>2017-03-03T03:03:13Z</time>
+<speed>0.32</speed>
+</trkpt>
+<trkpt lat="22.699705" lon="113.816978">
+<ele>80.400002</ele>
+<time>2017-03-03T03:03:19Z</time>
+<speed>0.30</speed>
+</trkpt>
+<trkpt lat="22.699762" lon="113.816971">
+<ele>76.339996</ele>
+<time>2017-03-03T03:03:25Z</time>
+<speed>0.60</speed>
+</trkpt>
+<trkpt lat="22.699810" lon="113.816971">
+<ele>72.909996</ele>
+<time>2017-03-03T03:03:31Z</time>
+<speed>0.51</speed>
+</trkpt>
+<trkpt lat="22.699842" lon="113.816956">
+<ele>75.570000</ele>
+<time>2017-03-03T03:03:37Z</time>
+<speed>0.18</speed>
+</trkpt>
+<trkpt lat="22.699875" lon="113.816910">
+<ele>72.279999</ele>
+<time>2017-03-03T03:03:43Z</time>
+<speed>0.18</speed>
+</trkpt>
+<trkpt lat="22.699909" lon="113.816872">
+<ele>58.699997</ele>
+<time>2017-03-03T03:03:49Z</time>
+<speed>0.07</speed>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

@@ -61,7 +61,9 @@ class AXYTREKParser(GPSHarmonizationMixin, CSVParser):
     def harmonize_data(self, data):
         # Combine Date and Time columns into timestamp
         data["timestamp"] = pd.to_datetime(
-            data["Date"] + " " + data["Time"], errors="raise"
+            data["Date"] + " " + data["Time"],
+            errors="raise",
+            format="%d.%m.%Y %H:%M:%S.%f",
         )
         return super().harmonize_data(data)
 
