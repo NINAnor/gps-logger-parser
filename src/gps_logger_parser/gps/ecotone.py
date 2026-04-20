@@ -50,7 +50,6 @@ class EcotoneParser(GPSHarmonizationMixin, CSVParser):
             )
 
     def harmonize_data(self, data):
-
         # Call parent harmonization — applies MAPPINGS, enforces GPS schema,
         # creates geometry, and drops raw source columns
         result = super().harmonize_data(data)
@@ -65,7 +64,7 @@ class EcotoneParser(GPSHarmonizationMixin, CSVParser):
             + data["hours"].astype(str)
             + ":"
             + data["minutes"].astype(str),
-            format="%Y/%m/%d %H:%M",
+            format="%y/%m/%d %H:%M",
             errors="raise",
         )
 

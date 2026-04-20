@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<gpx creator="Mobile Action http://www.mobileaction.com/1.1" version="1.0" xmlns="http://www.topografix.com/GPX/1/0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+<wpt lat="71.109505" lon="24.744732">
+<ele>6.350000</ele>
+<time>2017-06-22T19:18:02Z</time>
+<name></name>
+<desc></desc>
+<sym>Waypoint</sym>
+</wpt>
+<trk>
+<name>20170622-215608(1)</name>
+<desc>Color:004000ff</desc>
+<trkseg>
+<trkpt lat="71.109474" lon="24.744764">
+<ele>-4.600000</ele>
+<time>2017-06-22T19:15:50Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109474" lon="24.744764">
+<ele>-4.600000</ele>
+<time>2017-06-22T19:16:49Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109505" lon="24.744732">
+<ele>6.350000</ele>
+<time>2017-06-22T19:17:11Z</time>
+<speed>0.00</speed>
+</trkpt>
+</trkseg>
+</trk>
+<trk>
+<name>20170622-215608(2)</name>
+<desc>Color:004000ff</desc>
+<trkseg>
+<trkpt lat="71.109505" lon="24.744732">
+<ele>6.350000</ele>
+<time>2017-06-22T19:18:02Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744787">
+<ele>15.599999</ele>
+<time>2017-06-22T19:18:21Z</time>
+<speed>0.00</speed>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

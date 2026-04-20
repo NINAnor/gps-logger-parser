@@ -28,6 +28,7 @@ dependencies = [
   "numpy>=2.2.6",
   "pandas>=2.3.3",
   "pyarrow>=23.0.0",
+  "pyyaml>=6.0.3",
   "structlog>=25.5.0",
   "typer>=0.23.1",
   "universal-pathlib>=0.3.9"

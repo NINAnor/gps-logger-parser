@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<gpx creator="Mobile Action http://www.mobileaction.com/1.1" version="1.0" xmlns="http://www.topografix.com/GPX/1/0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+<trk>
+<name>20170622-102857(1)</name>
+<desc>Color:004000ff</desc>
+<trkseg>
+<trkpt lat="71.109634" lon="24.744751">
+<ele>21.600000</ele>
+<time>2017-06-22T08:25:42Z</time>
+<speed>0.11</speed>
+</trkpt>
+<trkpt lat="71.109627" lon="24.744747">
+<ele>21.480000</ele>
+<time>2017-06-22T08:25:47Z</time>
+<speed>0.13</speed>
+</trkpt>
+<trkpt lat="71.109627" lon="24.744753">
+<ele>23.070000</ele>
+<time>2017-06-22T08:25:53Z</time>
+<speed>0.05</speed>
+</trkpt>
+<trkpt lat="71.109634" lon="24.744755">
+<ele>24.100000</ele>
+<time>2017-06-22T08:25:59Z</time>
+<speed>0.29</speed>
+</trkpt>
+<trkpt lat="71.109634" lon="24.744757">
+<ele>24.900000</ele>
+<time>2017-06-22T08:26:05Z</time>
+<speed>0.13</speed>
+</trkpt>
+<trkpt lat="71.109642" lon="24.744780">
+<ele>29.910000</ele>
+<time>2017-06-22T08:26:11Z</time>
+<speed>0.47</speed>
+</trkpt>
+<trkpt lat="71.109634" lon="24.744768">
+<ele>27.769999</ele>
+<time>2017-06-22T08:26:17Z</time>
+<speed>0.02</speed>
+</trkpt>
+<trkpt lat="71.109642" lon="24.744799">
+<ele>34.239998</ele>
+<time>2017-06-22T08:26:23Z</time>
+<speed>0.44</speed>
+</trkpt>
+<trkpt lat="71.109589" lon="24.744877">
+<ele>28.469999</ele>
+<time>2017-06-22T08:26:29Z</time>
+<speed>0.10</speed>
+</trkpt>
+<trkpt lat="71.109596" lon="24.744839">
+<ele>23.010000</ele>
+<time>2017-06-22T08:26:35Z</time>
+<speed>0.08</speed>
+</trkpt>
+<trkpt lat="71.109596" lon="24.744844">
+<ele>23.469999</ele>
+<time>2017-06-22T08:26:41Z</time>
+<speed>0.10</speed>
+</trkpt>
+<trkpt lat="71.109604" lon="24.744877">
+<ele>31.199999</ele>
+<time>2017-06-22T08:26:47Z</time>
+<speed>0.65</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:26:54Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:00Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:06Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:12Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:18Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:27Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:33Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:39Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:45Z</time>
+<speed>0.00</speed>
+</trkpt>
+<trkpt lat="71.109566" lon="24.744869">
+<ele>13.340000</ele>
+<time>2017-06-22T08:27:51Z</time>
+<speed>0.00</speed>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

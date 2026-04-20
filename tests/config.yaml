@@ -1,0 +1,53 @@
+files:
+  BK_AN_161_PT_020713.LOG:
+    type: gps_2jm
+  G199_120708.TXT:
+    type: gps_2jm
+  BLK_An_189_01_120704.TXT:
+    type: gps_2jm
+  BRGU AXY06 15062018_S3.csv:
+    type: gps_axytrek
+  BRGU 4215328 AXY-29 04072018_S2.csv:
+    type: gps_axytrek
+  020719_BK_An_6199165_CC6_GPS.csv:
+    type: gps_cattrack
+  20160710-6228801-OBS.csv:
+    type: gps_cattrack
+  20160710-6217930-OBS.csv:
+    type: gps_cattrack
+  10_raw_csv_format.txt:
+    type: gps_ecotone
+  20170622-215451.gpx:
+    type: gps_gpx
+  20170622-215608.gpx:
+    type: gps_gpx
+  20170622-102857.gpx:
+    type: gps_gpx
+  Ho11_EM(csv version).csv:
+    type: gps_ho11
+  150717_BK_AN_6199514_GPS11.csv:
+    type: gps_igotugl
+  20150715-6126271-OSS.csv:
+    type: gps_igotugl
+  20160619-6223861-KRY.csv:
+    type: gps_igotugl
+  1d00000229.65520.-LocationData-Interrex_gpslogger.csv:
+    type: gps_interrex
+  putty_20130705_base115_2.log_106_GPS.csv:
+    type: gps_mataki
+  232772_20231115_12030_Ornitela_gpslogger.csv:
+    type: gps_ornitela
+  J150H_243391_20250210_131300.csv:
+    type: gps_ornitela
+  41422_all_data.pos:
+    type: gps_pathtrack
+  Tag41485_combined.pos:
+    type: gps_pathtrack
+  7AD_Tag42853_merged.csv:
+    type: gps_pathtrack
+  An12_PC.txt:
+    type: gps_unknown
+  An11_YL.txt:
+    type: gps_unknown
+  An12_PJ.txt:
+    type: gps_unknown
