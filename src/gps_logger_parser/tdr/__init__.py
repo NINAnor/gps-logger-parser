@@ -6,6 +6,8 @@ import pyarrow.csv as pacsv
 
 from ..helpers import stream_chunk_match, stream_starts_with
 from ..parser_base import CSVParser, Parsable, Parser
+from .columns import TDRHarmonizedColumn
+from .mixin import TDRHarmonizationMixin
 
 ENDLINES = ["No Fast Log Data", "No Fast Data"]
 
@@ -16,13 +18,19 @@ def skip(row):
     return "error"
 
 
-class TDRParser(Parser):
+class TDRParser(TDRHarmonizationMixin, Parser):
     DATATYPE = "tdr"
     FIELDS = ["Date/Time Stamp", "Pressure", "Temp"]
     SEPARATOR = ","
     ALLOWED_META = ["Resolution"]
     HEAD = "\n?Comment\\s:-"
     MAX_READ = 1000
+    MAPPINGS = {
+        TDRHarmonizedColumn.TIMESTAMP: "Date/Time Stamp",
+        TDRHarmonizedColumn.PRESSURE: "Pressure",
+        TDRHarmonizedColumn.TEMPERATURE: "Temp",
+        TDRHarmonizedColumn.DEPTH_M: None,
+    }
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)
@@ -69,7 +77,7 @@ class TDRParser(Parser):
                 convert_options=convert_options,
             ).to_pandas()
 
-        for key, value in meta:
+        for key, value in meta.items():
             self.data[key] = [value] * len(self.data)
 
 
@@ -79,9 +87,15 @@ class TDR2Parser(TDRParser):
         "Pressure",
         "Temp",
     ]
+    MAPPINGS = {
+        TDRHarmonizedColumn.TIMESTAMP: "Time Stamp",
+        TDRHarmonizedColumn.PRESSURE: "Pressure",
+        TDRHarmonizedColumn.TEMPERATURE: "Temp",
+        TDRHarmonizedColumn.DEPTH_M: None,
+    }
 
 
-class PathtrackPressParser(Parser):
+class PathtrackPressParser(TDRHarmonizationMixin, Parser):
     DATATYPE = "tdr"
     DIVIDER = "*" * 85 + "\n"
     HEAD = DIVIDER + "PathTrack Raw Pressure Data File Downloaded from Base Station"
@@ -101,22 +115,29 @@ class PathtrackPressParser(Parser):
     )
     OUTLIERS = None
     SEPARATOR = ","
+    MAPPINGS = {
+        TDRHarmonizedColumn.TIMESTAMP: "timestamp",
+        TDRHarmonizedColumn.PRESSURE: "depth_mbar_float",
+        TDRHarmonizedColumn.TEMPERATURE: "temperature_float",
+        TDRHarmonizedColumn.DEPTH_M: "depth_m_float",
+    }
 
     def harmonize_data(self, data):
-        data["time"] = (
-            data["hour"].astype(str)
-            + ":"
-            + data["minute"].astype(str)
-            + ":"
-            + data["second"].astype(str)
+        data["timestamp"] = pd.to_datetime(
+            {
+                "year": 2000 + data["year"],
+                "month": data["month"],
+                "day": data["day"],
+                "hour": data["hour"],
+                "minute": data["minute"],
+                "second": data["second"],
+            }
         )
-        data["date"] = (
-            data["day"].astype(str)
-            + "/"
-            + data["month"].astype(str)
-            + ":"
-            + data["year"].astype(str)
+        data["temperature_float"] = (
+            data["temperature"] + data["temperature_decimal"] / 100
         )
+        data["depth_mbar_float"] = data["depth_mbar"] + data["depth_mbar_decimal"] / 100
+        data["depth_m_float"] = data["depth_m"] + data["depth_m_decimal"] / 100
         return super().harmonize_data(data)
 
     def __init__(self, parsable: Parsable):
@@ -145,22 +166,34 @@ class PathtrackPressParser(Parser):
         )
 
 
-class SimpleTDR(CSVParser):
+class SimpleTDR(TDRHarmonizationMixin, CSVParser):
     DATATYPE = "tdr"
     FIELDS = [
         "Time Stamp",
         "Pressure",
         "Temp",
     ]
+    MAPPINGS = {
+        TDRHarmonizedColumn.TIMESTAMP: "Time Stamp",
+        TDRHarmonizedColumn.PRESSURE: "Pressure",
+        TDRHarmonizedColumn.TEMPERATURE: "Temp",
+        TDRHarmonizedColumn.DEPTH_M: None,
+    }
 
 
-class SimpleTDRVariantDate(CSVParser):
+class SimpleTDRVariantDate(TDRHarmonizationMixin, CSVParser):
     DATATYPE = "tdr"
     FIELDS = [
         "Date/Time Stamp",
         "Pressure",
         "Temp",
     ]
+    MAPPINGS = {
+        TDRHarmonizedColumn.TIMESTAMP: "Date/Time Stamp",
+        TDRHarmonizedColumn.PRESSURE: "Pressure",
+        TDRHarmonizedColumn.TEMPERATURE: "Temp",
+        TDRHarmonizedColumn.DEPTH_M: None,
+    }
 
 
 PARSERS = [

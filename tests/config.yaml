@@ -51,3 +51,13 @@ files:
     type: gps_unknown
   An12_PJ.txt:
     type: gps_unknown
+  A15153_08-06-2018.csv:
+    type: tdr
+  CG_DI_A08918_02-07-12.CSV:
+    type: tdr
+  Obs250823_130741_Tag47649Press.txt:
+    type: tdr
+  ES_RU_292616_TDR_red.csv:
+    type: tdr
+  ES-SK-F-19011-295827-20200702-X27_Acc.txt:
+    type: accelerometer
