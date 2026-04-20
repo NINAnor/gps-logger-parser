@@ -5,13 +5,15 @@ import pyarrow.csv as pacsv
 
 from ..helpers import stream_starts_with
 from ..parser_base import Parsable, Parser
+from .columns import AccelerometerHarmonizedColumn
+from .mixin import AccelerometerHarmonizationMixin
 
 
 def skip(row):
     return "error"
 
 
-class AcceleratorParser(Parser):
+class AcceleratorParser(AccelerometerHarmonizationMixin, Parser):
     DATATYPE = "accelerometer"
     FIELDS = ["X", "Y", "Z"]
     HEAD = "ACCELERATION DATA"
@@ -22,6 +24,12 @@ class AcceleratorParser(Parser):
     FREQUENCY_REGEX = r"\s*(\d*)\smsec\/point"
     DELTA_ATTR = "milliseconds"
     MAX_READ = 30
+    MAPPINGS = {
+        AccelerometerHarmonizedColumn.TIMESTAMP: "datetime",
+        AccelerometerHarmonizedColumn.X: "X",
+        AccelerometerHarmonizedColumn.Y: "Y",
+        AccelerometerHarmonizedColumn.Z: "Z",
+    }
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)
