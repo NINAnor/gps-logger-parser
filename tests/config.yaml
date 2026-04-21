@@ -75,3 +75,7 @@ files:
     type: gps_pathtrack
     notes: |
       this file has an invalid date at line 10
+  BLK_An_215_03_120716.TXT:
+    type: gps_2jm
+    notes: |
+      the last line of the file is corrupted and has an invalid date

@@ -286,7 +286,7 @@ class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
         result["timestamp"] = pd.to_datetime(
             data["UTC_date"] + " " + data["UTC_time"],
             format="%d.%m.%Y %H:%M:%S",
-            errors="raise",
+            errors="coerce",
         )
         return result
 
