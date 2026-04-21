@@ -69,10 +69,8 @@ class GPSHarmonizationMixin:
                 data["latitude"].values,
                 crs="EPSG:4326",
             )
-            # Convert to pandas ArrowExtensionArray
-            data["geometry"] = pd.array(
-                points.to_pylist(), dtype=pd.ArrowDtype(points.type)
-            )
+            # Convert to pandas ArrowExtensionArray directly from the Arrow array
+            data["geometry"] = pd.array(points, dtype=pd.ArrowDtype(points.type))
         else:
             # Create empty geometry column if lat/lon don't exist or are all null
             empty_points = ga.make_point(
@@ -81,7 +79,7 @@ class GPSHarmonizationMixin:
                 crs="EPSG:4326",
             )
             data["geometry"] = pd.array(
-                empty_points.to_pylist(), dtype=pd.ArrowDtype(empty_points.type)
+                empty_points, dtype=pd.ArrowDtype(empty_points.type)
             )
 
         return data

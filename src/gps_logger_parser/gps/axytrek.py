@@ -89,8 +89,10 @@ class AXYTREKParser(GPSHarmonizationMixin, CSVParser):
         parse_options = pacsv.ParseOptions(
             delimiter=self.SEPARATOR, invalid_row_handler=skip
         )
-        with self.file.get_stream(binary=True) as stream:
-            self.data = pacsv.read_csv(stream, parse_options=parse_options).to_pandas()
+        with self.file.get_stream(binary=True) as binary_stream:
+            self.data = pacsv.read_csv(
+                binary_stream, parse_options=parse_options
+            ).to_pandas()
 
 
 PARSERS = [

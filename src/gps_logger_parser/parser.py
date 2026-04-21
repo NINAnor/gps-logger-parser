@@ -21,6 +21,9 @@ def detect_file(path: UPath, *args, logger=logger, **kwargs):
 
     for parser in available_parsers:
         try:
+            if not parser.can_parse(parsable):
+                logger.debug(f"Skipped {parser.__name__}: can_parse returned False")
+                continue
             result = parser(parsable)
             logger.info(f"Parsed with {parser}")
             return result

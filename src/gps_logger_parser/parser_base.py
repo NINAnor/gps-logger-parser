@@ -42,7 +42,7 @@ class Parsable:
     def _detect_encoding(self):
         detector = UniversalDetector()
         with self.get_stream(binary=True) as stream:
-            for line in stream.readlines():
+            for line in stream:
                 detector.feed(line)
                 if detector.done:
                     break
@@ -56,7 +56,19 @@ class Parser:
     def __init__(self, parsable: Parsable):
         self.file = parsable
         self.data = []
-        self.harmonized_data = None
+
+    @classmethod
+    def can_parse(cls, parsable: Parsable) -> bool:
+        """Lightweight detection: check if this parser can handle the file.
+
+        Subclasses should override this to perform cheap checks (magic bytes,
+        header line) without reading or parsing the entire file. Returns True
+        if the file appears to match, False otherwise.
+
+        The default implementation returns False — every parser must explicitly
+        implement its own detection logic.
+        """
+        return False
 
     def _raise_not_supported(self, text):
         raise ParserNotSupported(f"{self.__class__.__name__}: {text}")
@@ -113,20 +125,26 @@ class Parser:
         )
 
     def as_table(self) -> pa.Table:
-        # Capture raw source data as JSON before any harmonization
-        original_records = self.data.to_dict(orient="records")
-        original_json = [json.dumps(row, default=str) for row in original_records]
+        # Build JSON array directly from row iteration to avoid materializing
+        # both a list-of-dicts and a list-of-JSON-strings simultaneously
+        original_json = pa.array(
+            (
+                json.dumps(row, default=str)
+                for row in self.data.to_dict(orient="records")
+            ),
+            type=pa.json_(pa.large_utf8()),
+        )
 
-        self.harmonized_data = self.harmonize_data(self.data.copy())
+        harmonized_data = self.harmonize_data(self.data)
 
-        if len(self.harmonized_data) == 0:
+        if len(harmonized_data) == 0:
             raise ValueError("Harmonized data is empty, cannot create table")
 
-        table = pa.Table.from_pandas(self.harmonized_data, preserve_index=False)
+        table = pa.Table.from_pandas(harmonized_data, preserve_index=False)
 
         table = table.append_column(
             "_original_data",
-            pa.array(original_json, type=pa.json_(pa.large_utf8())),
+            original_json,
         )
         table = table.append_column(
             "_datatype", pa.array([self.DATATYPE] * len(table), pa.string())
@@ -165,6 +183,23 @@ class CSVParser(Parser):
                 f"Stream have a header different than expected, "
                 f"{header} != {self.FIELDS}"
             )
+
+    @classmethod
+    def can_parse(cls, parsable: Parsable) -> bool:
+        """Check if the CSV header matches FIELDS without reading the full file."""
+        try:
+            with parsable.get_stream(binary=False) as stream:
+                if not stream.seekable():
+                    return False
+                reader = csv.reader(
+                    stream,
+                    delimiter=cls.SEPARATOR,
+                    skipinitialspace=cls.SKIP_INITIAL_SPACE,
+                )
+                header = next(reader)
+                return header == cls.FIELDS
+        except (StopIteration, UnicodeDecodeError):
+            return False
 
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)

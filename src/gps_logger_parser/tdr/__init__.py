@@ -32,6 +32,17 @@ class TDRParser(TDRHarmonizationMixin, Parser):
         TDRHarmonizedColumn.DEPTH_M: None,
     }
 
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the file matches the expected HEAD regex pattern."""
+        try:
+            with parsable.get_stream(binary=False) as stream:
+                if not stream.seekable():
+                    return False
+                return bool(stream_chunk_match(stream, 200, cls.HEAD))
+        except (UnicodeDecodeError, OSError):
+            return False
+
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)
         meta = {}
@@ -46,7 +57,7 @@ class TDRParser(TDRHarmonizationMixin, Parser):
             if not stream_chunk_match(stream, 200, self.HEAD):
                 self._raise_not_supported("Stream head different than expected")
 
-            for row in stream.readlines():
+            for row in stream:
                 if row.strip() == expected_row:
                     break
 
@@ -121,6 +132,17 @@ class PathtrackPressParser(TDRHarmonizationMixin, Parser):
         TDRHarmonizedColumn.TEMPERATURE: "temperature_float",
         TDRHarmonizedColumn.DEPTH_M: "depth_m_float",
     }
+
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the file starts with the expected HEAD bytes."""
+        try:
+            with parsable.get_stream(binary=False) as stream:
+                if not stream.seekable():
+                    return False
+                return stream_starts_with(stream, cls.HEAD)
+        except (UnicodeDecodeError, OSError):
+            return False
 
     def harmonize_data(self, data):
         data["timestamp"] = pd.to_datetime(
