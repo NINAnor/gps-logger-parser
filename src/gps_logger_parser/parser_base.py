@@ -47,7 +47,6 @@ class Parsable:
                 if detector.done:
                     break
             detector.close()
-            print(detector.result)
             return detector.result["encoding"]
 
 
@@ -90,7 +89,6 @@ class Parser:
         if mappings:
             # mappings is {source_col: harmonized_col}
             for source_col, harmonized_col in mappings.items():
-                print(f"Mapping {source_col} to {harmonized_col}")
                 if source_col in data.columns:
                     df[harmonized_col.value] = data[source_col]
                 else:
