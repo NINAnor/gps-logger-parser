@@ -78,6 +78,22 @@ class GPSUnknownFormatParserWithEmptyColumns(GPSHarmonizationMixin, Parser):
 
     MAPPINGS = MAPPINGS
 
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the header (with empty columns filtered) matches FIELDS."""
+        try:
+            with parsable.get_stream(binary=False) as stream:
+                if not stream.seekable():
+                    return False
+                reader = csv.reader(
+                    stream, delimiter=cls.SEPARATOR, skipinitialspace=True
+                )
+                header = next(reader)
+                header = [c for c in header if c != ""]
+                return header == cls.FIELDS
+        except (StopIteration, UnicodeDecodeError):
+            return False
+
     def harmonize_data(self, data):
         # Combine Date and Time columns into timestamp
         data["timestamp"] = pd.to_datetime(

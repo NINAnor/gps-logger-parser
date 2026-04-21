@@ -68,6 +68,15 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the file contains the 2JmGPS-LOG marker."""
+        try:
+            with parsable.get_stream(binary=False, errors="backslashreplace") as stream:
+                return stream_chunk_contains(stream, 30, "2JmGPS-LOG")
+        except (UnicodeDecodeError, OSError):
+            return False
+
     def harmonize_data(self, data):
         # Call parent harmonization — applies MAPPINGS, enforces GPS schema,
         # creates geometry, and drops raw source columns
@@ -276,8 +285,18 @@ class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
-    def harmonize_data(self, data):
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the file contains the GPS DATA marker."""
+        try:
+            with parsable.get_stream(binary=False, errors="backslashreplace") as stream:
+                return stream_chunk_contains(
+                    stream, 50, "************* GPS DATA *************"
+                )
+        except (UnicodeDecodeError, OSError):
+            return False
 
+    def harmonize_data(self, data):
         # Call parent harmonization — applies MAPPINGS, enforces GPS schema,
         # creates geometry, and drops raw source columns
         result = super().harmonize_data(data)

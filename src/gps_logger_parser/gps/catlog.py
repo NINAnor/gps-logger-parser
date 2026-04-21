@@ -3,7 +3,7 @@ import io
 
 import pandas as pd
 
-from ..helpers import stream_chunk_contains, stream_starts_with
+from ..helpers import stream_starts_with
 from ..parser_base import CSVParser, Parsable
 from .columns import GPSHarmonizedColumn
 from .mixin import GPSHarmonizationMixin
@@ -54,6 +54,17 @@ class GPSCatTrackParser(GPSHarmonizationMixin, CSVParser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the file starts with the expected START_WITH prefix."""
+        if not cls.START_WITH:
+            return True
+        try:
+            with parsable.get_stream(binary=False) as stream:
+                return stream_starts_with(stream, cls.START_WITH)
+        except (UnicodeDecodeError, OSError):
+            return False
+
     def harmonize_data(self, data):
         # Combine Date and Time columns into timestamp
         data["timestamp"] = pd.to_datetime(
@@ -73,13 +84,13 @@ class GPSCatTrackParser(GPSHarmonizationMixin, CSVParser):
                 self._raise_not_supported("Stream must start with Name:CatLog")
 
             if self.DIVIDER:
-                if stream_chunk_contains(stream, 500, self.DIVIDER):
-                    _intro, data = stream.read().split(self.DIVIDER)
-                    content = io.StringIO(data)
-                else:
+                full_content = stream.read()
+                if self.DIVIDER not in full_content:
                     self._raise_not_supported(
                         f"Stream doesn't have the divider {self.DIVIDER}"
                     )
+                _intro, data = full_content.split(self.DIVIDER, 1)
+                content = io.StringIO(data)
             else:
                 content = stream
 
@@ -191,13 +202,13 @@ class GPSCatTrack3(GPSCatTrackParser):
                 self._raise_not_supported("Stream must start with Name:CatLog")
 
             if self.DIVIDER:
-                if stream_chunk_contains(stream, 500, self.DIVIDER):
-                    _intro, data = stream.read().split(self.DIVIDER)
-                    content = io.StringIO(data)
-                else:
+                full_content = stream.read()
+                if self.DIVIDER not in full_content:
                     self._raise_not_supported(
                         f"Stream doesn't have the divider {self.DIVIDER}"
                     )
+                _intro, data = full_content.split(self.DIVIDER, 1)
+                content = io.StringIO(data)
             else:
                 content = stream
 

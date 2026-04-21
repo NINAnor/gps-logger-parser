@@ -53,6 +53,17 @@ class PathtrackParser(GPSHarmonizationMixin, Parser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the file starts with the expected HEAD bytes."""
+        try:
+            with parsable.get_stream(binary=False) as stream:
+                if not stream.seekable():
+                    return False
+                return stream_starts_with(stream, cls.HEAD)
+        except (UnicodeDecodeError, OSError):
+            return False
+
     def harmonize_data(self, data):
         # Combine date and time fields into timestamp
         data["timestamp"] = pd.to_datetime(

@@ -31,6 +31,15 @@ class AcceleratorParser(AccelerometerHarmonizationMixin, Parser):
         AccelerometerHarmonizedColumn.Z: "Z",
     }
 
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the file starts with the expected HEAD bytes."""
+        try:
+            with parsable.get_stream(binary=False) as stream:
+                return stream_starts_with(stream, cls.HEAD)
+        except (UnicodeDecodeError, OSError):
+            return False
+
     def __init__(self, parsable: Parsable):
         super().__init__(parsable)
 
@@ -46,7 +55,7 @@ class AcceleratorParser(AccelerometerHarmonizationMixin, Parser):
 
             stream.seek(0)
 
-            for row in stream.readlines():
+            for row in stream:
                 if [v.strip() for v in row.split(",")] == self.FIELDS:
                     break
                 row_count += 1

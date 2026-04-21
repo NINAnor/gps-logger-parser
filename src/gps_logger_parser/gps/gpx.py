@@ -42,6 +42,17 @@ class GPXParser(GPSHarmonizationMixin, Parser):
         GPSHarmonizedColumn.TRIP_NR: None,
     }
 
+    @classmethod
+    def can_parse(cls, parsable):
+        """Check if the file starts with <?xml within the first 30 bytes."""
+        try:
+            with parsable.get_stream(binary=False) as stream:
+                if not stream.seekable():
+                    return False
+                return stream_chunk_contains(stream, 30, "<?xml")
+        except (UnicodeDecodeError, OSError):
+            return False
+
     def harmonize_data(self, data):
         data["time"] = pd.to_datetime(data["time"], utc=True)
         return super().harmonize_data(data)
@@ -61,6 +72,6 @@ class GPXParser(GPSHarmonizationMixin, Parser):
             for track in gpx.tracks:
                 for segment in track.segments:
                     for point in segment.points:
-                        points.append(getattr(point, f) for f in self.FIELDS)
+                        points.append(tuple(getattr(point, f) for f in self.FIELDS))
 
             self.data = pd.DataFrame(points, columns=self.FIELDS)
