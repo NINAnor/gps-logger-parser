@@ -12,7 +12,9 @@ dev = [
   "mkdocs-material>=9.7.1",
   "mkdocs-typer2>=0.1.6",
   "ty>=0.0.3",
-  "coverage>=7.13.5"
+  "coverage>=7.13.5",
+  "pytest-benchmark>=5.2.3",
+  "pytest-memray>=1.8.0"
 ]
 
 [project]
