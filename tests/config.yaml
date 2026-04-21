@@ -63,3 +63,7 @@ files:
     type: accelerometer
   1d0000021e.65509.-EnvironmentData-Environment.csv:
     type: other_sensor
+  110708210243 BKAN 199 ZE.LOG:
+    type: gps_2jm
+    notes: |
+      this file has an error at line 22

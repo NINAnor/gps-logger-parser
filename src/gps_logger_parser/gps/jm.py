@@ -77,7 +77,8 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
         # before calling super(), so the harmonized lat/lon are in decimal degrees.
         # Latitude: degrees + (minutes / 60), with direction sign
         lat_decimal_degrees = (
-            data["latitude"].astype(int) + data["latitude_decimal"].astype(float) / 60
+            pd.to_numeric(data["latitude"], errors="coerce")
+            + pd.to_numeric(data["latitude_decimal"], errors="coerce") / 60
         )
         result["latitude"] = [
             signed(lat, direction)
@@ -86,7 +87,8 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
 
         # Longitude: degrees + (minutes / 60), with direction sign
         lon_decimal_degrees = (
-            data["longitude"].astype(int) + data["longitude_decimal"].astype(float) / 60
+            pd.to_numeric(data["longitude"], errors="coerce")
+            + pd.to_numeric(data["longitude_decimal"], errors="coerce") / 60
         )
         result["longitude"] = [
             signed(lon, direction)
