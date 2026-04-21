@@ -69,7 +69,7 @@ class PathtrackParser(GPSHarmonizationMixin, Parser):
             + ":"
             + data["second"].astype(str),
             format="%Y/%m/%d %H:%M:%S",
-            errors="raise",
+            errors="coerce",
         )
         return super().harmonize_data(data)
 

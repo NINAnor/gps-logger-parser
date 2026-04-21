@@ -79,3 +79,11 @@ files:
     type: gps_2jm
     notes: |
       the last line of the file is corrupted and has an invalid date
+  ES-SK-F-19015-295738-20210630-X23_Acc.txt:
+    type: accelerometer
+    notes: |
+      This file is failing in production
+  Røst_EUSH_2004866_NJ_GPS42941_2022.pos:
+    type: gps_pathtrack
+    notes: |
+      This file has some invalid dates somewhere
