@@ -178,7 +178,7 @@ class CSVPathtrack(GPSHarmonizationMixin, CSVParser):
             + ":"
             + data["second"].astype(str),
             format="%Y/%m/%d %H:%M:%S",
-            errors="raise",
+            errors="coerce",
         )
 
         for column in [

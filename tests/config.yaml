@@ -71,3 +71,7 @@ files:
     type: gps_igotugl
     notes: |
       This file is corrupted, has some invalid dates (12/60/2018)
+  7EH_Tag42877_merged.csv:
+    type: gps_pathtrack
+    notes: |
+      this file has an invalid date at line 10
