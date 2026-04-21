@@ -61,3 +61,5 @@ files:
     type: tdr
   ES-SK-F-19011-295827-20200702-X27_Acc.txt:
     type: accelerometer
+  1d0000021e.65509.-EnvironmentData-Environment.csv:
+    type: other_sensor
