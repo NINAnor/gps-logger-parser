@@ -1,6 +1,7 @@
 import pathlib
 
 import pyarrow as pa
+import pyarrow.compute as pc
 import pytest
 import yaml
 
@@ -69,6 +70,17 @@ def test_harmonizing(file, path, config):
     if "expected_rows" in config:
         assert len(table) == config["expected_rows"], (
             f"Expected {config['expected_rows']} rows but got {len(table)} for {file}"
+        )
+    if "expected_valid_rows" in config:
+        valid_mask = pc.invert(pc.is_null(table.column("timestamp")))
+        if "geometry" in table.column_names:
+            valid_mask = pc.and_(
+                valid_mask, pc.invert(pc.is_null(table.column("geometry")))
+            )
+        valid_row_count = pc.sum(valid_mask).as_py()
+        assert valid_row_count == config["expected_valid_rows"], (
+            f"Expected {config['expected_valid_rows']} valid rows but got "
+            f"{valid_row_count} for {file}"
         )
 
 

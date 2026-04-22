@@ -2,131 +2,170 @@ files:
   BK_AN_161_PT_020713.LOG:
     type: gps_2jm
     expected_rows: 87
+    expected_valid_rows: 87
   G199_120708.TXT:
     type: gps_2jm
     expected_rows: 43
+    expected_valid_rows: 43
   BLK_An_189_01_120704.TXT:
     type: gps_2jm
     expected_rows: 48
+    expected_valid_rows: 48
   BRGU AXY06 15062018_S3.csv:
     type: gps_axytrek
     expected_rows: 50
+    expected_valid_rows: 0
   BRGU 4215328 AXY-29 04072018_S2.csv:
     type: gps_axytrek
     expected_rows: 50
+    expected_valid_rows: 0
   020719_BK_An_6199165_CC6_GPS.csv:
     type: gps_cattrack
     expected_rows: 49
+    expected_valid_rows: 0
   20160710-6228801-OBS.csv:
     type: gps_cattrack
     expected_rows: 49
+    expected_valid_rows: 0
   20160710-6217930-OBS.csv:
     type: gps_cattrack
     expected_rows: 49
+    expected_valid_rows: 0
   10_raw_csv_format.txt:
     type: gps_ecotone
     expected_rows: 49
+    expected_valid_rows: 49
   20170622-215451.gpx:
     type: gps_gpx
     expected_rows: 10
+    expected_valid_rows: 10
   20170622-215608.gpx:
     type: gps_gpx
     expected_rows: 5
+    expected_valid_rows: 5
   20170622-102857.gpx:
     type: gps_gpx
     expected_rows: 22
+    expected_valid_rows: 22
   Ho11_EM(csv version).csv:
     type: gps_ho11
     expected_rows: 50
+    expected_valid_rows: 0
   150717_BK_AN_6199514_GPS11.csv:
     type: gps_igotugl
     expected_rows: 8
+    expected_valid_rows: 0
   20150715-6126271-OSS.csv:
     type: gps_igotugl
     expected_rows: 50
+    expected_valid_rows: 0
   20160619-6223861-KRY.csv:
     type: gps_igotugl
     expected_rows: 50
+    expected_valid_rows: 0
   1d00000229.65520.-LocationData-Interrex_gpslogger.csv:
     type: gps_interrex
     expected_rows: 50
+    expected_valid_rows: 50
   putty_20130705_base115_2.log_106_GPS.csv:
     type: gps_mataki
     expected_rows: 50
+    expected_valid_rows: 50
   232772_20231115_12030_Ornitela_gpslogger.csv:
     type: gps_ornitela
     expected_rows: 50
+    expected_valid_rows: 50
   J150H_243391_20250210_131300.csv:
     type: gps_ornitela
     expected_rows: 50
+    expected_valid_rows: 50
   41422_all_data.pos:
     type: gps_pathtrack
     expected_rows: 48
+    expected_valid_rows: 0
   Tag41485_combined.pos:
     type: gps_pathtrack
     expected_rows: 48
+    expected_valid_rows: 0
   7AD_Tag42853_merged.csv:
     type: gps_pathtrack
     expected_rows: 50
+    expected_valid_rows: 0
   An12_PC.txt:
     type: gps_unknown
     expected_rows: 50
+    expected_valid_rows: 0
   An11_YL.txt:
     type: gps_unknown
     expected_rows: 49
+    expected_valid_rows: 0
   An12_PJ.txt:
     type: gps_unknown
     expected_rows: 50
+    expected_valid_rows: 0
   A15153_08-06-2018.csv:
     type: tdr
     expected_rows: 49
+    expected_valid_rows: 0
   CG_DI_A08918_02-07-12.CSV:
     type: tdr
     expected_rows: 49
+    expected_valid_rows: 0
   Obs250823_130741_Tag47649Press.txt:
     type: tdr
     expected_rows: 49
+    expected_valid_rows: 49
   ES_RU_292616_TDR_red.csv:
     type: tdr
     expected_rows: 50
+    expected_valid_rows: 50
   ES-SK-F-19011-295827-20200702-X27_Acc.txt:
     type: accelerometer
     expected_rows: 49
+    expected_valid_rows: 49
   1d0000021e.65509.-EnvironmentData-Environment.csv:
     type: other_sensor
     expected_rows: 1215
+    expected_valid_rows: 1215
   110708210243 BKAN 199 ZE.LOG:
     type: gps_2jm
     expected_rows: 51
+    expected_valid_rows: 50
     notes: |
       this file has an error at line 22
   Alkefjellet_11307_010720_corrupt.csv:
     type: gps_igotugl
     expected_rows: 9
+    expected_valid_rows: 0
     notes: |
       This file is corrupted, has some invalid dates (12/60/2018)
   7EH_Tag42877_merged.csv:
     type: gps_pathtrack
     expected_rows: 12
+    expected_valid_rows: 11
     notes: |
       this file has an invalid date at line 10
   BLK_An_215_03_120716.TXT:
     type: gps_2jm
     expected_rows: 10
+    expected_valid_rows: 9
     notes: |
       the last line of the file is corrupted and has an invalid date
   ES-SK-F-19015-295738-20210630-X23_Acc.txt:
     type: accelerometer
     expected_rows: 15
+    expected_valid_rows: 15
     notes: |
       This file is failing in production
   Røst_EUSH_2004866_NJ_GPS42941_2022.pos:
     type: gps_pathtrack
-    expected_rows: 8
+    expected_rows: 10
+    expected_valid_rows: 9
     notes: |
-      This file has some invalid dates somewhere
+      This file has invalid date on line 11
   J2710_242854_20250210_101400.csv:
     type: gps_ornitela
     expected_rows: 1
+    expected_valid_rows: 1
     notes: |
-      This file has some invalid dates somewhere
+      This file has only one row
