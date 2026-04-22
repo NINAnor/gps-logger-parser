@@ -73,7 +73,9 @@ class Parser:
         Remap values parsed using MAPPINGS into harmonized column names.
 
         For each entry in MAPPINGS that has a source column, the source column
-        value is copied into the harmonized column name.
+        value is copied into the harmonized column name. If the source is None
+        but the harmonized column already exists in data (e.g. created by a
+        subclass), it is preserved.
 
         Args:
             data: DataFrame to harmonize (a copy of self.data)
@@ -81,18 +83,21 @@ class Parser:
         Returns:
             Harmonized DataFrame with harmonized columns added
         """
-        mappings = self.get_mappings()
+        mappings = getattr(self, "MAPPINGS", {})
+
+        if not mappings:
+            raise NotImplementedError("Subclasses must provide a mapping")
 
         schema = self.get_harmonization_schema()
         df = pd.DataFrame(columns=schema.keys()).astype(schema)
 
-        if mappings:
-            # mappings is {source_col: harmonized_col}
-            for source_col, harmonized_col in mappings.items():
-                if source_col in data.columns:
-                    df[harmonized_col.value] = data[source_col]
-                else:
-                    df[harmonized_col.value] = None
+        for harmonized_col, source_col in mappings.items():
+            if source_col is not None and source_col in data.columns:
+                df[harmonized_col.value] = data[source_col]
+            elif harmonized_col.value in data.columns:
+                df[harmonized_col.value] = data[harmonized_col.value]
+            else:
+                df[harmonized_col.value] = None
 
         return df
 
