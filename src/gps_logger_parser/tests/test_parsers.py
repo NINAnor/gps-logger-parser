@@ -66,6 +66,10 @@ def test_harmonizing(file, path, config):
     assert "_original_data" in table.column_names, (
         f"Parser {file} is missing the '_original_data' column"
     )
+    if "expected_rows" in config:
+        assert len(table) == config["expected_rows"], (
+            f"Expected {config['expected_rows']} rows but got {len(table)} for {file}"
+        )
 
 
 # @pytest.mark.timeout(10)

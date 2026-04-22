@@ -152,7 +152,7 @@ class CSVParser(Parser):
     FIELDS = []
     SEPARATOR = ","
     SKIP_INITIAL_SPACE = True
-    HEADER = 1
+    HEADER = 0
 
     def _check_headers(self, header):
         if header != self.FIELDS:
