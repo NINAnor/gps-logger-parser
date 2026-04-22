@@ -46,11 +46,20 @@ class IGotU_GT_Parser(GPSHarmonizationMixin, CSVParser):
 
     def harmonize_data(self, data):
         # Combine Date and Time columns into timestamp
+        # Try M/D/Y format first (most common), fall back to Y/M/D
+        combined = data["Date"] + " " + data["Time"]
         data["timestamp"] = pd.to_datetime(
-            data["Date"] + " " + data["Time"],
+            combined,
             format="%m/%d/%Y %H:%M:%S",
             errors="coerce",
         )
+        missing_mask = data["timestamp"].isna()
+        if missing_mask.any():
+            data.loc[missing_mask, "timestamp"] = pd.to_datetime(
+                combined[missing_mask],
+                format="%Y/%m/%d %H:%M:%S",
+                errors="coerce",
+            )
         return super().harmonize_data(data)
 
 

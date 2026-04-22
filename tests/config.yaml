@@ -54,9 +54,7 @@ files:
   150717_BK_AN_6199514_GPS11.csv:
     type: gps_igotugl
     expected_rows: 8
-    expected_valid_rows: 0
-    notes: |
-      Date format is YYYY/MM/DD but parser expects %m/%d/%Y, timestamps fail to parse
+    expected_valid_rows: 8
   20150715-6126271-OSS.csv:
     type: gps_igotugl
     expected_rows: 50
