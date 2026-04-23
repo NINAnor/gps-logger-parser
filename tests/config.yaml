@@ -105,16 +105,12 @@ files:
     expected_valid_rows: 50
   A15153_08-06-2018.csv:
     type: tdr
-    expected_rows: 49
-    expected_valid_rows: 0
-    notes: |
-      TDR2Parser fallback: pyarrow CSV reader fails to parse content, all data is None
+    expected_rows: 50
+    expected_valid_rows: 50
   CG_DI_A08918_02-07-12.CSV:
     type: tdr
-    expected_rows: 49
-    expected_valid_rows: 0
-    notes: |
-      TDRParser: pyarrow CSV reader fails to parse content, all data is None
+    expected_rows: 50
+    expected_valid_rows: 50
   Obs250823_130741_Tag47649Press.txt:
     type: tdr
     expected_rows: 49
@@ -173,3 +169,9 @@ files:
     expected_valid_rows: 1
     notes: |
       This file has only one row
+  ES-SK-M-A12258-20160708-2001407-x31-small.CSV:
+    type: tdr
+    expected_rows: 101
+    expected_valid_rows: 101
+    notes: |
+      This file is a small sample of a TDR file, it has 100 rows.
