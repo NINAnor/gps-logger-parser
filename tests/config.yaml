@@ -175,3 +175,9 @@ files:
     expected_valid_rows: 101
     notes: |
       This file is a small sample of a TDR file, it has 100 rows.
+  A15153_20-10-2021.csv:
+    type: tdr
+    expected_rows: 50
+    expected_valid_rows: 50
+    notes: |
+      This file is a TDR file with 50 rows, all valid.

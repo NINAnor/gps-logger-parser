@@ -76,10 +76,33 @@ class TDRParser(TDRHarmonizationMixin, Parser):
         parse_options = pacsv.ParseOptions(
             delimiter=self.SEPARATOR, invalid_row_handler=skip
         )
-        read_options = pacsv.ReadOptions(skip_rows=row_count)
+        read_options = pacsv.ReadOptions(
+            skip_rows=row_count + 1,
+            column_names=self.FIELDS,
+        )
         convert_options = pacsv.ConvertOptions(
-            include_columns=self.FIELDS + ["empty"],
+            include_columns=self.FIELDS,
             include_missing_columns=True,
+        )
+        with self.file.get_stream(binary=True) as stream:
+            try:
+                self.data = pacsv.read_csv(
+                    stream,
+                    parse_options=parse_options,
+                    read_options=read_options,
+                    convert_options=convert_options,
+                ).to_pandas()
+            except pa.lib.ArrowInvalid:
+                pass
+            else:
+                for key, value in meta.items():
+                    self.data[key] = [value] * len(self.data)
+                return
+
+        # Retry with an extra column to handle trailing comma in data rows
+        read_options = pacsv.ReadOptions(
+            skip_rows=row_count + 1,
+            column_names=self.FIELDS + ["_trailing"],
         )
         with self.file.get_stream(binary=True) as stream:
             self.data = pacsv.read_csv(
