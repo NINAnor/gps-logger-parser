@@ -5,6 +5,7 @@ import pathlib
 from contextlib import contextmanager
 
 import geoarrow.pandas as _  # noqa: F401
+import geoarrow.pyarrow as ga
 import pandas as pd
 import pyarrow as pa
 import pyarrow.csv as pacsv
@@ -124,7 +125,7 @@ class Parser:
             "Subclasses must implement get_harmonization_schema()"
         )
 
-    def as_table(self) -> pa.Table:
+    def as_table(self, geometry_encoding: str = "wkb") -> pa.Table:
         # Build JSON array directly from row iteration to avoid materializing
         # both a list-of-dicts and a list-of-JSON-strings simultaneously
         original_json = pa.array(
@@ -142,6 +143,14 @@ class Parser:
 
         table = pa.Table.from_pandas(harmonized_data, preserve_index=False)
 
+        if geometry_encoding == "wkb" and "geometry" in table.column_names:
+            geometry_index = table.column_names.index("geometry")
+            table = table.set_column(
+                geometry_index,
+                "geometry",
+                ga.as_wkb(table.column("geometry")),
+            )
+
         table = table.append_column(
             "_original_data",
             original_json,
@@ -158,16 +167,16 @@ class Parser:
         )
         return table
 
-    def write_parquet(self, path: pathlib.Path, filename: str | None = None):
+    def write_parquet(self, path: pathlib.Path, filename: str | None = None, **kwargs):
         if filename:
             filename = pathlib.Path(filename)
         else:
             filename = self.file._file_path.name
 
-        pq.write_table(self.as_table(), str(path / f"{filename}.parquet"))
+        pq.write_table(self.as_table(**kwargs), str(path / f"{filename}.parquet"))
 
-    def write_csv(self, path):
-        pacsv.write_csv(self.as_table(), str(path))
+    def write_csv(self, path, **kwargs):
+        pacsv.write_csv(self.as_table(**kwargs), str(path))
 
 
 class CSVParser(Parser):

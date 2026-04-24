@@ -1,5 +1,6 @@
 import pathlib
 
+import geoarrow.pyarrow as ga
 import pyarrow as pa
 import pyarrow.compute as pc
 import pytest
@@ -82,6 +83,39 @@ def test_harmonizing(file, path, config):
             f"Expected {config['expected_valid_rows']} valid rows but got "
             f"{valid_row_count} for {file}"
         )
+
+
+gps_test_files = [
+    (filename, TESTS_DATA_PATH / "files" / filename, conf)
+    for filename, conf in CONFIG.get("files", {}).items()
+    if conf.get("skip", False) is not True
+    and conf.get("type", "").startswith("gps")
+    and (TESTS_DATA_PATH / "files" / filename).exists()
+]
+
+
+@pytest.mark.timeout(10)
+@pytest.mark.parametrize("file,path,config", gps_test_files)
+def test_geometry_encoding_wkb(file, path, config):
+    """Test that as_table() produces WKB-encoded geometry by default."""
+    parser_instance = detect_file(path)
+    table = parser_instance.as_table()
+    assert "geometry" in table.column_names
+    geometry_type = table.schema.field("geometry").type
+    assert isinstance(geometry_type, ga.GeometryExtensionType)
+    assert geometry_type.encoding == ga.Encoding.WKB
+
+
+@pytest.mark.timeout(10)
+@pytest.mark.parametrize("file,path,config", gps_test_files)
+def test_geometry_encoding_geoarrow(file, path, config):
+    """Test that as_table(geometry_encoding='geoarrow') preserves native encoding."""
+    parser_instance = detect_file(path)
+    table = parser_instance.as_table(geometry_encoding="geoarrow")
+    assert "geometry" in table.column_names
+    geometry_type = table.schema.field("geometry").type
+    assert isinstance(geometry_type, ga.GeometryExtensionType)
+    assert geometry_type.encoding == ga.Encoding.GEOARROW
 
 
 # @pytest.mark.timeout(10)
