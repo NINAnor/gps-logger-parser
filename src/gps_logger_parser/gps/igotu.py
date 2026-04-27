@@ -60,6 +60,11 @@ class IGotU_GT_Parser(GPSHarmonizationMixin, CSVParser):
                 format="%Y/%m/%d %H:%M:%S",
                 errors="coerce",
             )
+
+        # Speed is provided in cm/s, convert to km/h (× 0.036)
+        if "Speed" in data.columns:
+            data["Speed"] = pd.to_numeric(data["Speed"], errors="coerce") * 0.036
+
         return super().harmonize_data(data)
 
 

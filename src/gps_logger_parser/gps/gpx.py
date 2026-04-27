@@ -9,6 +9,7 @@ from .mixin import GPSHarmonizationMixin
 
 class GPXParser(GPSHarmonizationMixin, Parser):
     DATATYPE = "gps_gpx"
+    SPEED_MS_TO_KMH = True
     FIELDS = [
         "latitude",
         "longitude",

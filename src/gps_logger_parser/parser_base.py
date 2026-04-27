@@ -53,6 +53,7 @@ class Parsable:
 
 class Parser:
     DATATYPE = "generic_parser"
+    SPEED_MS_TO_KMH = False
 
     def __init__(self, parsable: Parsable):
         self.file = parsable

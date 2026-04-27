@@ -35,6 +35,10 @@ class GPSHarmonizationMixin:
         # First, apply standard column renaming
         data = super().harmonize_data(data)
 
+        # Convert speed from m/s to km/h if the parser provides speed in m/s
+        if self.SPEED_MS_TO_KMH and "speed_km_h" in data.columns:
+            data["speed_km_h"] = data["speed_km_h"] * 3.6
+
         # Create geometry column from latitude and longitude (WGS84)
         # Note: This creates geometry from current lat/lon values
         # If parsers modify lat/lon after calling super(), they should

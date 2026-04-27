@@ -17,6 +17,7 @@ def skip(row):
 
 class AXYTREKParser(GPSHarmonizationMixin, CSVParser):
     DATATYPE = "gps_axytrek"
+    SPEED_MS_TO_KMH = True
     FIELDS = [
         "TagID",
         "Date",

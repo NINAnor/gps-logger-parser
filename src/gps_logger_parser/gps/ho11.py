@@ -67,6 +67,9 @@ class GPSUHo11(GPSHarmonizationMixin, CSVParser):
             except AttributeError:
                 pass
 
+        # Speed is provided in m/h, convert to km/h
+        data["Speed"] = data["Speed"] / 1000
+
         return super().harmonize_data(data)
 
 

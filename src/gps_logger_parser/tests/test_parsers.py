@@ -118,6 +118,50 @@ def test_geometry_encoding_geoarrow(file, path, config):
     assert geometry_type.encoding == ga.Encoding.GEOARROW
 
 
+# Reasonable speed thresholds for sea birds (km/h)
+# Sea birds typically cruise at 20-80 km/h, with rare bursts up to ~120 km/h.
+# A 95th percentile below 1 km/h suggests values are still in m/s (unconverted).
+# A 95th percentile above 150 km/h suggests values were wrongly converted or are not km/h.
+SPEED_KMH_P95_MIN = 1.0
+SPEED_KMH_P95_MAX = 80.0
+
+
+@pytest.mark.timeout(10)
+@pytest.mark.parametrize("file,path,config", gps_test_files)
+def test_speed_km_h_reasonable(file, path, config):
+    """Test that harmonized speed_km_h values fall within a reasonable range for sea birds.
+
+    Uses a dual threshold on the 95th percentile: too-low values indicate m/s
+    was not converted, while too-high values indicate incorrect units or double
+    conversion.
+    """
+    parser_instance = detect_file(path)
+    table = parser_instance.as_table()
+    assert "speed_km_h" in table.column_names
+
+    speed_column = table.column("speed_km_h")
+    valid_speeds = pc.filter(speed_column, pc.invert(pc.is_null(speed_column)))
+
+    if len(valid_speeds) == 0:
+        pytest.skip(f"No valid speed data in {file}")
+
+    # Drop zeros for percentile calculation (GPS often reports 0 when stationary)
+    non_zero_speeds = pc.filter(valid_speeds, pc.greater(valid_speeds, 0))
+    if len(non_zero_speeds) == 0:
+        pytest.skip(f"All speed values are zero or null in {file}")
+
+    p95 = pc.quantile(non_zero_speeds, q=0.95)[0].as_py()
+
+    assert p95 >= SPEED_KMH_P95_MIN, (
+        f"95th percentile speed {p95:.2f} km/h is suspiciously low for {file}. "
+        f"Values may still be in m/s (threshold: {SPEED_KMH_P95_MIN} km/h)."
+    )
+    assert p95 <= SPEED_KMH_P95_MAX, (
+        f"95th percentile speed {p95:.2f} km/h is too high for sea birds in {file}. "
+        f"Values may have wrong units (threshold: {SPEED_KMH_P95_MAX} km/h)."
+    )
+
+
 # @pytest.mark.timeout(10)
 # @pytest.mark.parametrize("file,path,file_format", testdata_success)
 # def test_original_data_preserved(file, path, file_format):
