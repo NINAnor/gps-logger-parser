@@ -5,6 +5,7 @@ import pyarrow as pa
 import pyarrow.compute as pc
 import pytest
 import yaml
+from tabulate import tabulate
 
 from ..parser import detect_file
 
@@ -79,9 +80,31 @@ def test_harmonizing(file, path, config):
                 valid_mask, pc.invert(pc.is_null(table.column("geometry")))
             )
         valid_row_count = pc.sum(valid_mask).as_py()
+        print(
+            tabulate(
+                table.drop("_original_data").to_pydict(),
+                headers="keys",
+                tablefmt="fancy_grid",
+            )
+        )
         assert valid_row_count == config["expected_valid_rows"], (
             f"Expected {config['expected_valid_rows']} valid rows but got "
             f"{valid_row_count} for {file}"
+        )
+    if "expected_empty_geom" in config:
+        assert "geometry" in table.column_names, (
+            f"Parser {file} is missing the 'geometry' column"
+        )
+        geometry = ga.as_geoarrow(table.column("geometry"))
+        coordinates = tuple(ga.point_coords(geometry))
+        empty_point_mask = pc.or_(
+            pc.is_nan(coordinates[0]),
+            pc.is_nan(coordinates[1]),
+        )
+        empty_row_count = pc.sum(empty_point_mask).as_py()
+        assert empty_row_count == config["expected_empty_geom"], (
+            f"Expected {config['expected_empty_geom']} empty rows but got "
+            f"{empty_row_count} for {file}"
         )
 
 
@@ -116,68 +139,3 @@ def test_geometry_encoding_geoarrow(file, path, config):
     geometry_type = table.schema.field("geometry").type
     assert isinstance(geometry_type, ga.GeometryExtensionType)
     assert geometry_type.encoding == ga.Encoding.GEOARROW
-
-
-# @pytest.mark.timeout(10)
-# @pytest.mark.parametrize("file,path,file_format", testdata_success)
-# def test_original_data_preserved(file, path, file_format):
-#     """
-#     Test that raw source data is preserved in the _original_data JSON column
-#     for all parser types.
-#     """
-#     parser_instance = detect_file(path)
-#     table = parser_instance.as_table()
-
-#     assert "_original_data" in table.column_names, (
-#         f"Parser {file} is missing the '_original_data' column"
-#     )
-
-#     # Verify the column type is json(large_utf8)
-#     actual_type = table.schema.field("_original_data").type
-#     assert actual_type == pa.json_(pa.large_utf8()), (
-#         f"Column '_original_data' has type {actual_type}, "
-#         f"expected {pa.json_(pa.large_utf8())} in {file}"
-#     )
-
-#     # Verify values are valid JSON objects with at least one key
-#     first_value = table.column("_original_data")[0].as_py()
-#     parsed = json.loads(first_value)
-#     assert isinstance(parsed, dict), (
-#         f"_original_data value is not a JSON object in {file}"
-#     )
-#     assert len(parsed) > 0, f"_original_data JSON object has no keys in {file}"
-
-
-# @pytest.mark.timeout(10)
-# @pytest.mark.parametrize("file,path", testdata_fail)
-# def test_parser_fail(file, path):
-#     with pytest.raises(NotImplementedError):
-#         detect_file(path)
-
-
-# @pytest.mark.timeout(10)
-# @pytest.mark.parametrize("file,path,file_format", testdata_success)
-# def test_harmonized_output_schema(file, path, file_format):
-#     """
-#     Test that every success test input outputs a harmonized file with:
-#     1. Required metadata columns (_datatype, _parser, _logger_file) with correct types
-#     2. For GPS parsers: All harmonized columns present
-#     """
-#     parser_instance = detect_file(path)
-#     table = parser_instance.as_table()
-
-#     # Check that all required metadata columns are present with correct types
-#     column_names = table.column_names
-#     for col_name, expected_type in REQUIRED_METADATA_COLUMNS.items():
-#         assert col_name in column_names, (
-#             f"Required column '{col_name}' not found in {file}"
-#         )
-#         actual_type = table.schema.field(col_name).type
-#         assert actual_type == expected_type, (
-#             f"Column '{col_name}' has type {actual_type}, expected {expected_type} in {file}"
-#         )
-
-#     schema = parser_instance.get_harmonization_schema()
-#     assert set(list(schema.keys()) + list(REQUIRED_METADATA_COLUMNS.keys())) == set(
-#         column_names
-#     )

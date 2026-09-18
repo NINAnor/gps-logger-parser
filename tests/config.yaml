@@ -1,8 +1,8 @@
 files:
   BK_AN_161_PT_020713.LOG:
     type: gps_2jm
-    expected_rows: 87
-    expected_valid_rows: 87
+    expected_rows: 10
+    expected_valid_rows: 10
   G199_120708.TXT:
     type: gps_2jm
     expected_rows: 43
@@ -129,8 +129,9 @@ files:
     expected_valid_rows: 1215
   110708210243 BKAN 199 ZE.LOG:
     type: gps_2jm
-    expected_rows: 51
-    expected_valid_rows: 50
+    expected_rows: 11
+    expected_valid_rows: 11
+    expected_empty_geom: 1
     notes: |
       this file has an error at line 22
   Alkefjellet_11307_010720_corrupt.csv:
@@ -181,3 +182,10 @@ files:
     expected_valid_rows: 50
     notes: |
       This file is a TDR file with 50 rows, all valid.
+  BK_SG_163_6138293_20120627.LOG:
+    type: gps_2jm
+    expected_rows: 6
+    expected_valid_rows: 5
+    expected_empty_geom: 1
+    notes: |
+      this file has an error encoding

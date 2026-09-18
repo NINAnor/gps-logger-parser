@@ -80,7 +80,7 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
     def harmonize_data(self, data):
         # Call parent harmonization — applies MAPPINGS, enforces GPS schema,
         # creates geometry, and drops raw source columns
-        result = super().harmonize_data(data)
+        result = super().harmonize_data(data, skip_geom=True)
 
         # Convert coordinates from degrees + decimal minutes to decimal degrees
         # before calling super(), so the harmonized lat/lon are in decimal degrees.
@@ -180,9 +180,10 @@ class GPS2JMParser7_5(GPSHarmonizationMixin, Parser):
                     f"{len(header)} != {len(self.FIELDS)}"
                 )
 
+            content.seek(0)
             self.data = pd.read_csv(
                 content,
-                header=0,
+                header=None,
                 names=self.FIELDS,
                 sep=self.SEPARATOR,
                 index_col=False,
@@ -356,14 +357,20 @@ class GPS2JMParser8Alternative(GPSHarmonizationMixin, Parser):
                 index_col=False,
             )
 
-            df["Latitude"] = [
-                signed(v, d)
-                for v, d in zip(df["Latitude"], df["Latitude_dir"], strict=False)
-            ]
-            df["Longitude"] = [
-                signed(v, d)
-                for v, d in zip(df["Longitude"], df["Longitude_dir"], strict=False)
-            ]
+            df["Latitude"] = pd.to_numeric(
+                [
+                    signed(v, d)
+                    for v, d in zip(df["Latitude"], df["Latitude_dir"], strict=False)
+                ],
+                errors="coerce",
+            )
+            df["Longitude"] = pd.to_numeric(
+                [
+                    signed(v, d)
+                    for v, d in zip(df["Longitude"], df["Longitude_dir"], strict=False)
+                ],
+                errors="coerce",
+            )
             self.data = df
 
 

@@ -21,7 +21,7 @@ class GPSHarmonizationMixin:
     according to the GPS_HARMONIZED_COLUMN_TYPES specification.
     """
 
-    def harmonize_data(self, data):
+    def harmonize_data(self, data, skip_geom=False):
         """
         Remap values parsed and ensure all GPS harmonized columns exist
         with correct types
@@ -39,7 +39,8 @@ class GPSHarmonizationMixin:
         # Note: This creates geometry from current lat/lon values
         # If parsers modify lat/lon after calling super(), they should
         # call _create_geometry_column() again
-        data = self._create_geometry_column(data)
+        if not skip_geom:
+            data = self._create_geometry_column(data)
         return data
 
     def _create_geometry_column(self, data):
